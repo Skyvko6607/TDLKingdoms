@@ -1,4 +1,4 @@
-package me.sky.kingdoms.base;
+package me.sky.kingdoms.base.theme;
 
 import java.util.List;
 

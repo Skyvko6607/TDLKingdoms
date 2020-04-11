@@ -1,5 +1,7 @@
-package me.sky.kingdoms.base;
+package me.sky.kingdoms.base.theme;
 
+import me.sky.kingdoms.base.building.IKingdomBuilding;
+import me.sky.kingdoms.base.building.IKingdomTemplate;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;

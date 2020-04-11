@@ -1,4 +1,4 @@
-package me.sky.kingdoms.base;
+package me.sky.kingdoms.base.building;
 
 import com.sk89q.worldedit.math.Vector3;
 
