@@ -11,6 +11,6 @@ public interface IKingdomBuilding {
     KingdomBuildingType getType();
     Vector3 getOffset();
     Direction getDirection();
-    List<Vector3> getBuildingAreas();
+    List<Vector3[]> getBuildingAreas();
     File getSchematicFile();
 }

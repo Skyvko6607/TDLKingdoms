@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class House implements IKingdomBuildingData {
+public class Mine implements IKingdomBuildingData {
 
     private final String id;
 
@@ -20,7 +20,7 @@ public class House implements IKingdomBuildingData {
     private UUID owner = null;
     private Map<JsonLocation, List<ItemStack>> storage = new HashMap<>();
 
-    public House(IKingdomBuilding building) {
+    public Mine(IKingdomBuilding building) {
         this.id = building.getId();
     }
 
