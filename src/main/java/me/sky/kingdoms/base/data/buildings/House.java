@@ -4,8 +4,6 @@ import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.KingdomBuildingType;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.utils.JsonLocation;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.builder.ToStringBuilder;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.builder.ToStringStyle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,16 +59,5 @@ public class House implements IKingdomBuildingData {
 
     public Map<JsonLocation, List<ItemStack>> getStorage() {
         return storage;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-                .append("id", id)
-                .append("placedBlocks", placedBlocks)
-                .append("isOwned", owned)
-                .append("owner", owner)
-                .append("storage", storage)
-                .toString();
     }
 }
