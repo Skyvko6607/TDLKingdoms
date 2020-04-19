@@ -15,11 +15,11 @@ public interface IKingdomTheme {
     String getName();
     ItemStack getIcon();
     SortedMap<Integer, IKingdomTemplate> getMainTemplates();
+    IKingdomTemplate getTemplate(int level);
     void setId(String id);
     void setName(String name);
     void setIcon(ItemStack icon);
     void createTemplate(int level);
-    IKingdomTemplate getTemplate(int level);
     void removeTemplate(int level);
 
     Gson gson = new Gson();

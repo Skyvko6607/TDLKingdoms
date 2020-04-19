@@ -3,20 +3,22 @@ package me.sky.kingdoms.base.data.buildings;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.KingdomBuildingType;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
-import me.sky.kingdoms.utils.JsonLocation;
+import me.sky.kingdoms.base.data.objects.IValuedBuilding;
+import me.sky.kingdoms.utils.SerializableLocation;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class House implements IKingdomBuildingData {
+public class House implements IKingdomBuildingData, IValuedBuilding {
 
     private final String id;
 
-    private List<JsonLocation> placedBlocks = new ArrayList<>();
+    private List<SerializableLocation> placedBlocks = new ArrayList<>();
     private boolean owned = false;
     private UUID owner = null;
-    private Map<JsonLocation, List<ItemStack>> storage = new HashMap<>();
+    private Map<SerializableLocation, List<ItemStack>> storage = new HashMap<>();
+    private int buyPrice, sellPrice;
 
     public House(IKingdomBuilding building) {
         this.id = building.getId();
@@ -33,7 +35,7 @@ public class House implements IKingdomBuildingData {
     }
 
     @Override
-    public List<JsonLocation> getPlacedBlocks() {
+    public List<SerializableLocation> getPlacedBlocks() {
         return placedBlocks;
     }
 
@@ -57,7 +59,17 @@ public class House implements IKingdomBuildingData {
         this.owner = player.getUniqueId();
     }
 
-    public Map<JsonLocation, List<ItemStack>> getStorage() {
+    public Map<SerializableLocation, List<ItemStack>> getStorage() {
         return storage;
+    }
+
+    @Override
+    public int getBuyPrice() {
+        return buyPrice;
+    }
+
+    @Override
+    public int getSellPrice() {
+        return sellPrice;
     }
 }

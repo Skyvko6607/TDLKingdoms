@@ -12,7 +12,7 @@ import java.util.TreeMap;
 public class KingdomTheme implements IKingdomTheme {
 
     private String id, name, icon;
-    private SortedMap<Integer, IKingdomTemplate> templates = new TreeMap<>();
+    private final SortedMap<Integer, IKingdomTemplate> templates = new TreeMap<>();
 
     public KingdomTheme(String id) {
         this.id = id;
@@ -46,6 +46,11 @@ public class KingdomTheme implements IKingdomTheme {
     }
 
     @Override
+    public IKingdomTemplate getTemplate(int level) {
+        return this.templates.getOrDefault(level, null);
+    }
+
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -70,17 +75,7 @@ public class KingdomTheme implements IKingdomTheme {
     }
 
     @Override
-    public IKingdomTemplate getTemplate(int level) {
-        return this.templates.getOrDefault(level, null);
-    }
-
-    @Override
     public void removeTemplate(int level) {
         this.templates.remove(level);
-    }
-
-    @Override
-    public void onDelete() {
-
     }
 }

@@ -14,18 +14,27 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://E:/MC Plugin Libraries/spigot-1.15.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../MC Plugin Libraries/spigot-1.15.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://E:/MC Plugin Libraries/spigot-1.15.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../MC Plugin Libraries/spigot-1.15.2.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://E:/MC Plugin Libraries/FastAsyncWorldEdit-1.15-157.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../MC Plugin Libraries/FastAsyncWorldEdit-1.15-157.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../MC Plugin Libraries/Vault.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
