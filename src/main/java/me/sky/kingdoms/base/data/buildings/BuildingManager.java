@@ -73,14 +73,14 @@ public class BuildingManager implements IManager {
 
     public EditSession placeBuilding(IKingdom kingdom, IKingdomBuilding building) throws IOException {
         BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
-        vec.subtract(building.getOffset().toBlockPoint());
+        vec.add(building.getOffset().toBlockPoint());
         File schematic = building.getSchematicFile();
         return placeSchematic(kingdom, vec, schematic, building.getDirection());
     }
 
     public EditSession placeTemplate(IKingdom kingdom, IKingdomTemplate template) throws IOException {
         BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
-        vec.subtract(template.getCenterOffset().toBlockPoint());
+        vec.add(template.getCenterOffset().toBlockPoint());
         File schematic = template.getSchematicFile();
         return placeSchematic(kingdom, vec, schematic, null);
     }
@@ -90,15 +90,13 @@ public class BuildingManager implements IManager {
         if (direction != null) {
             transform.rotateY(direction.getAngle());
         }
-        EditSession editSession = ClipboardFormats.findByFile(schematic).load(schematic).paste(
+        return ClipboardFormats.findByFile(schematic).load(schematic).paste(
                 FaweAPI.getWorld(kingdom.getLocation().getWorld().getName()),
                 location,
                 true,
                 true,
                 transform
         );
-        editSession.flushQueue();
-        return editSession;
     }
 
     public IKingdomBuilding getBuilding(String id, IKingdomTemplate template) {

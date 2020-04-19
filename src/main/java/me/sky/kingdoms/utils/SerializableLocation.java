@@ -5,16 +5,12 @@ import org.bukkit.Location;
 
 public class SerializableLocation extends SerializableVector {
 
-    private String world;
-    private float pitch;
-    private float yaw;
+    private final String world;
+    private final float pitch;
+    private final float yaw;
 
     public SerializableLocation(Location loc) {
         super(loc);
-        setLocation(loc);
-    }
-
-    public void setLocation(Location loc) {
         this.world = loc.getWorld().getName();
         this.pitch = loc.getPitch();
         this.yaw = loc.getYaw();

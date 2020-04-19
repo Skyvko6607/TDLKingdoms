@@ -1,23 +1,20 @@
 package me.sky.kingdoms.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class SerializableVector {
 
-    private double x;
-    private double y;
-    private double z;
+    private final double x, y, z;
 
     public SerializableVector(Location loc) {
-        setLocation(loc);
+        this(loc.getX(), loc.getY(), loc.getZ());
     }
 
-    public void setLocation(Location loc) {
-        this.x = loc.getX();
-        this.y = loc.getY();
-        this.z = loc.getZ();
+    public SerializableVector(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public double getX() {

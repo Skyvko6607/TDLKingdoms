@@ -1,7 +1,9 @@
 package me.sky.kingdoms;
 
+import com.google.gson.Gson;
 import me.sky.kingdoms.base.data.buildings.BuildingManager;
 import me.sky.kingdoms.base.main.IKingdomManager;
+import me.sky.kingdoms.base.main.KingdomManager;
 import me.sky.kingdoms.base.theme.IKingdomThemeManager;
 import me.sky.kingdoms.base.theme.KingdomThemeManager;
 import net.milkbowl.vault.economy.Economy;
@@ -14,6 +16,7 @@ public class Main extends JavaPlugin implements IKingdomsPlugin {
     private BuildingManager buildingManager;
     private IKingdomManager kingdomManager;
     private Economy economy;
+    private Gson gson;
 
     public void onEnable() {
         if (!setupEconomy() ) {
@@ -21,13 +24,15 @@ public class Main extends JavaPlugin implements IKingdomsPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        this.gson = new Gson();
+        this.kingdomManager = new KingdomManager(this);
         this.themeManager = new KingdomThemeManager(this);
         this.buildingManager = new BuildingManager(this);
     }
 
     @Override
-    public IKingdomManager getManager() {
-        return null;
+    public IKingdomManager getKingdomManager() {
+        return kingdomManager;
     }
 
     @Override
@@ -43,6 +48,11 @@ public class Main extends JavaPlugin implements IKingdomsPlugin {
     @Override
     public Economy getEconomy() {
         return economy;
+    }
+
+    @Override
+    public Gson getGson() {
+        return gson;
     }
 
     private boolean setupEconomy() {
