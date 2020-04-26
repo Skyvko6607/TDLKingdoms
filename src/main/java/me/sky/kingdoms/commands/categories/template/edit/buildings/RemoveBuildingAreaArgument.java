@@ -1,4 +1,4 @@
-package me.sky.kingdoms.commands.arguments.template.edit.buildings;
+package me.sky.kingdoms.commands.categories.template.edit.buildings;
 
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
@@ -6,19 +6,22 @@ import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.commands.ICommandArgument;
-import me.sky.kingdoms.utils.SerializableVector;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-public class ListBuildingAreaArgument implements ICommandArgument {
+public class RemoveBuildingAreaArgument implements ICommandArgument {
     @Override
     public String getArgument() {
-        return "addbuildingarea <theme> <level> <id>";
+        return "removebuildingarea <theme> <level> <id> <index>";
     }
 
     @Override
     public void onCommand(Player player, String[] strings, Command command, IKingdomsPlugin plugin) {
         IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(strings[0]);
+        if (theme == null) {
+            player.sendMessage(KingdomUtils.PREFIX + "This theme doesn't exist!");
+            return;
+        }
         int level = Integer.parseInt(strings[1]);
         if (!theme.getMainTemplates().containsKey(level)) {
             player.sendMessage(KingdomUtils.PREFIX + "This template doesn't exist!");
@@ -37,11 +40,12 @@ public class ListBuildingAreaArgument implements ICommandArgument {
             player.sendMessage(KingdomUtils.PREFIX + "Building with this ID doesn't exist!");
             return;
         }
-        player.sendMessage(KingdomUtils.PREFIX + "Building areas by index:");
-        int i = 0;
-        for (SerializableVector[] area : building.getBuildingAreas()) {
-            player.sendMessage("§f" + i + ": §7(" + area[0].toString() + "; " + area[1].toString() + ")");
-            i++;
+        int index = Integer.parseInt(strings[3]);
+        if (index >= building.getBuildingAreas().size()) {
+            player.sendMessage(KingdomUtils.PREFIX + "The index exceeds the size of the building areas list!");
+            return;
         }
+        building.getBuildingAreas().remove(index);
+        player.sendMessage(KingdomUtils.PREFIX + "Building area removed!");
     }
 }

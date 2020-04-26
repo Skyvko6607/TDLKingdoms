@@ -1,8 +1,14 @@
 package me.sky.kingdoms.base.main;
 
+import com.boydti.fawe.FaweAPI;
+import com.boydti.fawe.bukkit.wrapper.AsyncWorld;
+import com.boydti.fawe.util.TaskManager;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.world.FastModeExtent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
@@ -12,7 +18,10 @@ import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.utils.Language;
 import me.sky.kingdoms.utils.Options;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -93,13 +102,12 @@ public class KingdomManager implements IKingdomManager {
     @Override
     public IKingdom createKingdom(Player owner, String name, IKingdomTheme theme) {
         IKingdom nearest = getNearestKingdom(owner.getLocation());
-        if (owner.getLocation().distance(nearest.getLocation()) <= Options.get().getInt("MinimumDistanceBetween")) {
+        if (nearest != null && owner.getLocation().distance(nearest.getLocation()) <= Options.get().getInt("MinimumDistanceBetween")) {
             return null;
         }
         IKingdom kingdom = new Kingdom(owner, name, theme);
-        EditSession session;
         try {
-            session = plugin.getBuildingManager().placeTemplate(kingdom, theme.getTemplate(kingdom.getLevel()));
+            plugin.getBuildingManager().placeTemplate(kingdom, theme.getTemplate(kingdom.getLevel()));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -108,25 +116,37 @@ public class KingdomManager implements IKingdomManager {
         for (IKingdomBuilding building : kingdom.getBuildings()) {
             BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
             vec.add(building.getOffset().toBlockPoint());
-            session.setBlock(vec, BlockTypes.OAK_SIGN);
+            Block block = new Location(kingdom.getLocation().getWorld(), vec.getX(), vec.getY(), vec.getZ()).getBlock();
+            block.setType(Material.OAK_SIGN);
         }
-        session.flushSession();
-        for (IKingdomBuilding building : theme.getTemplate(kingdom.getLevel()).getBuildings()) {
-            Vector3 offset = building.getOffset();
-            Sign sign = (Sign) kingdom.getLocation().add(offset.getX(), offset.getY(), offset.getZ());
-            List<String> signLore = Language.get().getMessageList(StringUtils.capitalize(building.getType().name()) + "Property");
-            signLore.replaceAll(s -> s
-                    .replace("%price%", (building instanceof IValuedBuilding ? String.valueOf(((IValuedBuilding) building).getBuyPrice()) : "0"))
-                    .replace("%name%", building.getName())
-            );
-            for (int i = 0; i < 4; i++) {
-                if (i >= signLore.size()) {
-                    break;
-                }
-                sign.setLine(i, signLore.get(i));
+        TaskManager.IMP.async(() -> {
+            AsyncWorld world = AsyncWorld.wrap(kingdom.getLocation().getWorld());
+            for (IKingdomBuilding building : kingdom.getBuildings()) {
+                BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
+                vec.add(building.getOffset().toBlockPoint());
+                BlockState b = vec.getBlock(new FastModeExtent(FaweAPI.getWorld(world.getName())));
+                world.setBlock(vec.getX(), vec.getY(), vec.getZ(), b);
             }
-            sign.update();
-        }
+            world.commit();
+//            for (IKingdomBuilding building : theme.getTemplate(kingdom.getLevel()).getBuildings()) {
+//                Vector3 offset = building.getOffset();
+//                Sign sign = (Sign) kingdom.getLocation().add(offset.getX(), offset.getY(), offset.getZ()).getBlock().getState();
+//                List<String> signLore = Language.get().getMessageList(StringUtils.capitalize(building.getType().name()) + "Property");
+//                signLore.replaceAll(s -> s
+//                        .replace("%price%", (building instanceof IValuedBuilding ? String.valueOf(((IValuedBuilding) building).getBuyPrice()) : "0"))
+//                        .replace("%name%", building.getName())
+//                );
+//                for (int i = 0; i < 4; i++) {
+//                    if (i >= signLore.size()) {
+//                        break;
+//                    }
+//                    sign.setLine(i, signLore.get(i));
+//                }
+//                sign.update();
+//            }
+        });
+        owner.closeInventory();
+        plugin.getKingdomManager().saveKingdom(kingdom);
         return kingdom;
     }
 

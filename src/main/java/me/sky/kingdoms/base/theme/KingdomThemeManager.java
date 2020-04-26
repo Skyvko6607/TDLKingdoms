@@ -13,7 +13,6 @@ public class KingdomThemeManager implements IKingdomThemeManager {
 
     private final IKingdomsPlugin plugin;
     private final List<IKingdomTheme> themes = new ArrayList<>();
-    private final Gson gson = new Gson();
 
     public KingdomThemeManager(IKingdomsPlugin plugin) {
         this.plugin = plugin;
@@ -30,6 +29,7 @@ public class KingdomThemeManager implements IKingdomThemeManager {
         if (dir.listFiles().length <= 0) {
             return;
         }
+        Gson gson = new Gson();
         for (File file : dir.listFiles()) {
             try {
                 Scanner scanner = new Scanner(file);

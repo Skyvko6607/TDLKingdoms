@@ -1,8 +1,8 @@
-package me.sky.kingdoms.commands.arguments.template.edit;
+package me.sky.kingdoms.commands.categories.template.edit;
 
 import me.sky.kingdoms.commands.ICommandArgument;
 import me.sky.kingdoms.commands.ICommandCategory;
-import me.sky.kingdoms.commands.arguments.template.edit.buildings.*;
+import me.sky.kingdoms.commands.categories.template.edit.buildings.*;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,7 +1,7 @@
 package me.sky.kingdoms.base.main;
 
-import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.data.IMemberData;
+import me.sky.kingdoms.base.data.buildings.types.KingdomBuilding;
+import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.main.objects.KingdomPrivacy;
 import me.sky.kingdoms.base.main.objects.KingdomRank;
 import me.sky.kingdoms.utils.SerializableLocation;
@@ -15,10 +15,10 @@ import java.util.UUID;
 public interface IKingdom {
     String getUuid();
     String getName();
-    Map<UUID, IMemberData> getMembers();
+    Map<UUID, MemberData> getMembers();
     KingdomPrivacy getPrivacy();
     String getThemeName();
-    List<IKingdomBuilding> getBuildings();
+    List<KingdomBuilding> getBuildings();
     int getLevel();
     double getExperience();
     Location getLocation();

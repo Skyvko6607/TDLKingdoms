@@ -3,6 +3,7 @@ package me.sky.kingdoms.base.theme;
 import com.google.gson.Gson;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomTemplate;
+import me.sky.kingdoms.base.building.KingdomTemplate;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -17,7 +18,7 @@ public interface IKingdomTheme {
     List<String> getDescription();
     ItemStack getIcon();
     int getSlot();
-    SortedMap<Integer, IKingdomTemplate> getMainTemplates();
+    SortedMap<Integer, KingdomTemplate> getMainTemplates();
     IKingdomTemplate getTemplate(int level);
     void setId(String id);
     void setName(String name);

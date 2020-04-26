@@ -16,7 +16,7 @@ public class KingdomTheme implements IKingdomTheme {
     private String id, name, icon;
     private int slot;
     private List<String> description = new ArrayList<>();
-    private final SortedMap<Integer, IKingdomTemplate> templates = new TreeMap<>();
+    private final SortedMap<Integer, KingdomTemplate> templates = new TreeMap<>();
 
     public KingdomTheme(String id) {
         this.id = id;
@@ -55,7 +55,7 @@ public class KingdomTheme implements IKingdomTheme {
     }
 
     @Override
-    public SortedMap<Integer, IKingdomTemplate> getMainTemplates() {
+    public SortedMap<Integer, KingdomTemplate> getMainTemplates() {
         return templates;
     }
 

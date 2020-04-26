@@ -1,6 +1,8 @@
 package me.sky.kingdoms.commands;
 
 import me.sky.kingdoms.IKingdomsPlugin;
+import me.sky.kingdoms.base.KingdomUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -12,14 +14,21 @@ public interface ICommandCategory extends ICommandArgument {
 
     @Override
     default void onCommand(Player player, String[] strings, Command command, IKingdomsPlugin plugin) {
+        if (strings.length == 0) {
+            sendArgumentsList(player, command.getName());
+            return;
+        }
         for (ICommandArgument argument : getCommandArguments()) {
             if (strings[0].equalsIgnoreCase(argument.getArgument().split(" ")[0])) {
-                if (strings.length != argument.getArgument().split(" ").length) {
-                    player.sendMessage("/" + command.getName() + " " + argument.getArgument());
-                    return;
-                }
-                if (!player.isOp() && (argument.getPermission() != null && !player.hasPermission(argument.getPermission()))) {
-                    return;
+                if (!(argument instanceof ICommandCategory)) {
+                    if (strings.length != argument.getArgument().split(" ").length) {
+                        player.sendMessage(KingdomUtils.PREFIX + "§7Correct usage: §f/" + command.getName() + " " + argument.getArgument());
+                        return;
+                    }
+                    if (!player.isOp() && (argument.getPermission() != null && !player.hasPermission(argument.getPermission()))) {
+                        player.sendMessage(KingdomUtils.PREFIX + "You don't have enough permissions to use this!");
+                        return;
+                    }
                 }
                 argument.onCommand(player, Arrays.copyOfRange(strings, 1, strings.length), command, plugin);
                 return;

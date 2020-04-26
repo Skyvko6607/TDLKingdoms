@@ -1,7 +1,6 @@
 package me.sky.kingdoms.base.main;
 
-import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.data.IMemberData;
+import me.sky.kingdoms.base.data.buildings.types.KingdomBuilding;
 import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.main.objects.KingdomPrivacy;
 import me.sky.kingdoms.base.main.objects.KingdomRank;
@@ -16,8 +15,8 @@ public class Kingdom implements IKingdom {
 
     private final String uuid, theme;
     private final SerializableLocation location;
-    private final List<IKingdomBuilding> buildings = new ArrayList<>();
-    private final Map<UUID, IMemberData> memberDataMap = new HashMap<>();
+    private final List<KingdomBuilding> buildings = new ArrayList<>();
+    private final Map<UUID, MemberData> memberDataMap = new HashMap<>();
     private String name;
     private int level = 1;
     private double experience = 0, balance = 0;
@@ -44,7 +43,7 @@ public class Kingdom implements IKingdom {
     }
 
     @Override
-    public Map<UUID, IMemberData> getMembers() {
+    public Map<UUID, MemberData> getMembers() {
         return memberDataMap;
     }
 
@@ -59,7 +58,7 @@ public class Kingdom implements IKingdom {
     }
 
     @Override
-    public List<IKingdomBuilding> getBuildings() {
+    public List<KingdomBuilding> getBuildings() {
         return buildings;
     }
 

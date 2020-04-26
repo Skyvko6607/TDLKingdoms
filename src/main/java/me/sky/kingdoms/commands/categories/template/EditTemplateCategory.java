@@ -1,10 +1,10 @@
-package me.sky.kingdoms.commands.arguments.template;
+package me.sky.kingdoms.commands.categories.template;
 
 import me.sky.kingdoms.commands.ICommandArgument;
 import me.sky.kingdoms.commands.ICommandCategory;
-import me.sky.kingdoms.commands.arguments.template.edit.BuildingsCategory;
-import me.sky.kingdoms.commands.arguments.template.edit.MaxMembersTemplateArgument;
-import me.sky.kingdoms.commands.arguments.template.edit.SchematicTemplateArgument;
+import me.sky.kingdoms.commands.categories.template.edit.BuildingsCategory;
+import me.sky.kingdoms.commands.categories.template.edit.MaxMembersTemplateArgument;
+import me.sky.kingdoms.commands.categories.template.edit.SchematicTemplateArgument;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,9 +1,11 @@
 package me.sky.kingdoms.base.building;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import me.sky.kingdoms.base.data.buildings.types.KingdomBuilding;
 import me.sky.kingdoms.utils.SerializableVector;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +15,8 @@ public class KingdomTemplate implements IKingdomTemplate {
     private String schematic;
     private SerializableVector offset;
     private int maxMembers;
+
+    private final List<KingdomBuilding> buildings = new ArrayList<>();
 
     public KingdomTemplate() {
         id = UUID.randomUUID().toString();
@@ -34,8 +38,8 @@ public class KingdomTemplate implements IKingdomTemplate {
     }
 
     @Override
-    public List<IKingdomBuilding> getBuildings() {
-        return null;
+    public List<KingdomBuilding> getBuildings() {
+        return buildings;
     }
 
     @Override
