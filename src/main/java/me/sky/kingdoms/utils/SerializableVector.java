@@ -1,5 +1,7 @@
 package me.sky.kingdoms.utils;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -31,5 +33,14 @@ public class SerializableVector {
 
     public Vector getVector() {
         return new Vector(x, y, z);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+                .append("x", x)
+                .append("y", y)
+                .append("z", z)
+                .toString();
     }
 }

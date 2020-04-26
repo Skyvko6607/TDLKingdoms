@@ -1,6 +1,6 @@
 package me.sky.kingdoms.base.building;
 
-import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.math.BlockVector3;
 import me.sky.kingdoms.utils.SerializableVector;
 
 import java.io.File;
@@ -29,8 +29,8 @@ public class KingdomTemplate implements IKingdomTemplate {
     }
 
     @Override
-    public Vector3 getCenterOffset() {
-        return Vector3.at(offset.getX(), offset.getY(), offset.getZ());
+    public BlockVector3 getCenterOffset() {
+        return BlockVector3.at(offset.getX(), offset.getY(), offset.getZ());
     }
 
     @Override
@@ -46,5 +46,15 @@ public class KingdomTemplate implements IKingdomTemplate {
     @Override
     public void setMaxMembers(int maxMembers) {
         this.maxMembers = maxMembers;
+    }
+
+    @Override
+    public void setCenterOffset(BlockVector3 vector) {
+        this.offset = new SerializableVector(vector.getX(), vector.getY(), vector.getZ());
+    }
+
+    @Override
+    public void setSchematic(File schematic) {
+        this.schematic = schematic.getPath();
     }
 }

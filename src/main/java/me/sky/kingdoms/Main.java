@@ -6,6 +6,10 @@ import me.sky.kingdoms.base.main.IKingdomManager;
 import me.sky.kingdoms.base.main.KingdomManager;
 import me.sky.kingdoms.base.theme.IKingdomThemeManager;
 import me.sky.kingdoms.base.theme.KingdomThemeManager;
+import me.sky.kingdoms.commands.KingdomCommand;
+import me.sky.kingdoms.utils.Language;
+import me.sky.kingdoms.utils.Options;
+import me.sky.kingdoms.utils.menu.IMenuHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,10 +28,14 @@ public class Main extends JavaPlugin implements IKingdomsPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        new IMenuHandler(this);
+        new Language(this);
+        new Options(this);
         this.gson = new Gson();
         this.kingdomManager = new KingdomManager(this);
         this.themeManager = new KingdomThemeManager(this);
         this.buildingManager = new BuildingManager(this);
+        this.getCommand("kingdom").setExecutor(new KingdomCommand(this));
     }
 
     @Override

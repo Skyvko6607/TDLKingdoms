@@ -59,6 +59,16 @@ public class KingdomManager implements IKingdomManager {
     }
 
     @Override
+    public IKingdom getKingdomByName(String name) {
+        for (IKingdom kingdom : kingdoms) {
+            if (kingdom.getName().equalsIgnoreCase(name)) {
+                return kingdom;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void loadKingdoms() {
         File dir = new File("plugins/" + getPlugin().getName() + "/data");
         if (!dir.exists()) {
@@ -102,9 +112,6 @@ public class KingdomManager implements IKingdomManager {
         }
         session.flushSession();
         for (IKingdomBuilding building : theme.getTemplate(kingdom.getLevel()).getBuildings()) {
-            if (building.getType().equals(KingdomBuildingType.MINE)) {
-                continue;
-            }
             Vector3 offset = building.getOffset();
             Sign sign = (Sign) kingdom.getLocation().add(offset.getX(), offset.getY(), offset.getZ());
             List<String> signLore = Language.get().getMessageList(StringUtils.capitalize(building.getType().name()) + "Property");

@@ -8,18 +8,23 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.SortedMap;
 
 public interface IKingdomTheme {
     String getId();
     String getName();
+    List<String> getDescription();
     ItemStack getIcon();
+    int getSlot();
     SortedMap<Integer, IKingdomTemplate> getMainTemplates();
     IKingdomTemplate getTemplate(int level);
     void setId(String id);
     void setName(String name);
     void setIcon(ItemStack icon);
-    void createTemplate(int level);
+    void setSlot(int slot);
+    void setDescription(List<String> description);
+    IKingdomTemplate createTemplate(int level);
     void removeTemplate(int level);
 
     Gson gson = new Gson();

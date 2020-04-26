@@ -6,12 +6,16 @@ import me.sky.kingdoms.utils.JsonItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class KingdomTheme implements IKingdomTheme {
 
     private String id, name, icon;
+    private int slot;
+    private List<String> description = new ArrayList<>();
     private final SortedMap<Integer, IKingdomTemplate> templates = new TreeMap<>();
 
     public KingdomTheme(String id) {
@@ -31,6 +35,11 @@ public class KingdomTheme implements IKingdomTheme {
     }
 
     @Override
+    public List<String> getDescription() {
+        return description;
+    }
+
+    @Override
     public ItemStack getIcon() {
         try {
             return JsonItemStack.itemFrom64(icon);
@@ -38,6 +47,11 @@ public class KingdomTheme implements IKingdomTheme {
             icon = null;
         }
         return null;
+    }
+
+    @Override
+    public int getSlot() {
+        return slot;
     }
 
     @Override
@@ -70,8 +84,18 @@ public class KingdomTheme implements IKingdomTheme {
     }
 
     @Override
-    public void createTemplate(int level) {
-        this.templates.put(level, new KingdomTemplate());
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
+    @Override
+    public void setDescription(List<String> description) {
+        this.description = description;
+    }
+
+    @Override
+    public IKingdomTemplate createTemplate(int level) {
+        return this.templates.put(level, new KingdomTemplate());
     }
 
     @Override

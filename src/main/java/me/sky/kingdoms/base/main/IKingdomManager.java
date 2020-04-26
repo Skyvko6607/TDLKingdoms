@@ -14,6 +14,7 @@ public interface IKingdomManager extends IManager {
     List<IKingdom> getKingdoms();
     IKingdom getKingdomByPlayer(Player player);
     IKingdom getKingdomByUniqueId(String uniqueId);
+    IKingdom getKingdomByName(String name);
     void loadKingdoms();
     IKingdom createKingdom(Player owner, String name, IKingdomTheme theme);
     IKingdom getNearestKingdom(Location location);

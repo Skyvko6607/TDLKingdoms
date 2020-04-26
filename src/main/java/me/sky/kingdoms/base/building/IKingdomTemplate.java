@@ -1,7 +1,6 @@
 package me.sky.kingdoms.base.building;
 
-import com.sk89q.worldedit.math.Vector3;
-import org.bukkit.Location;
+import com.sk89q.worldedit.math.BlockVector3;
 
 import java.io.File;
 import java.util.List;
@@ -9,9 +8,10 @@ import java.util.List;
 public interface IKingdomTemplate {
     String getId();
     File getSchematicFile();
-    Vector3 getCenterOffset();
+    BlockVector3 getCenterOffset();
     List<IKingdomBuilding> getBuildings();
     int getMaxMembers();
     void setMaxMembers(int maxMembers);
-    void setCenterOffset(Location location);
+    void setCenterOffset(BlockVector3 vector);
+    void setSchematic(File schematic);
 }
