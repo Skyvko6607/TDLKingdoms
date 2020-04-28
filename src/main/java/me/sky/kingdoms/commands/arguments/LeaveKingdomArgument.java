@@ -22,7 +22,7 @@ public class LeaveKingdomArgument implements ICommandArgument {
             player.sendMessage(KingdomUtils.PREFIX + "You are not part of a kingdom!");
             return;
         }
-        kingdom.removeMember(player);
+        kingdom.removeMember(player, plugin);
         plugin.getKingdomManager().saveKingdom(kingdom);
         player.sendMessage(KingdomUtils.PREFIX + "Successfully left kingdom!");
     }

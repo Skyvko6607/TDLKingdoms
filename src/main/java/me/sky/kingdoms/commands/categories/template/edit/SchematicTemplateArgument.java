@@ -1,16 +1,14 @@
 package me.sky.kingdoms.commands.categories.template.edit;
 
 import com.boydti.fawe.Fawe;
-import com.boydti.fawe.FaweAPI;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
-import me.sky.kingdoms.base.building.IKingdomTemplate;
+import me.sky.kingdoms.base.template.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.commands.ICommandArgument;
 import org.bukkit.command.Command;
@@ -26,6 +24,7 @@ public class SchematicTemplateArgument implements ICommandArgument {
         return "setschematic <theme> <level>";
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCommand(Player player, String[] strings, Command command, IKingdomsPlugin plugin) {
         IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(strings[0]);
@@ -39,13 +38,12 @@ public class SchematicTemplateArgument implements ICommandArgument {
             return;
         }
         IKingdomTemplate template = theme.getTemplate(level);
-        Region selection = Fawe.get().getWorldEdit().getSessionManager().findByName(player.getName()).getSelection(FaweAPI.getWorld(player.getWorld().getName()));
-        if (selection == null) {
-            player.sendMessage(KingdomUtils.PREFIX + "No selection!");
+        ClipboardHolder holder = Fawe.get().getWorldEdit().getSessionManager().get(new BukkitPlayer(player)).getExistingClipboard();
+        if (holder == null || holder.getClipboard() == null) {
+            player.sendMessage(KingdomUtils.PREFIX + "The clipboard is empty! Do //copy to create a clipboard.");
             return;
         }
-        Clipboard clipboard = new BlockArrayClipboard(selection);
-        clipboard.setOrigin(BlockVector3.at(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
+        Clipboard clipboard = holder.getClipboard();
         File dir = new File("plugins/" + plugin.getName() + "/schematics");
         if (!dir.exists()) {
             dir.mkdir();
@@ -70,6 +68,7 @@ public class SchematicTemplateArgument implements ICommandArgument {
             player.sendMessage(KingdomUtils.PREFIX + "Failed to save schematic!");
             return;
         }
+        template.setLocation(clipboard.getOrigin());
         template.setSchematic(file);
         template.setCenterOffset(clipboard.getOrigin().subtract(clipboard.getMinimumPoint()));
         player.sendMessage(KingdomUtils.PREFIX + "Schematic successfully set!");

@@ -6,16 +6,17 @@ import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.template.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.commands.ICommandArgument;
-import me.sky.kingdoms.utils.SerializableVector;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-public class ListBuildingAreaArgument implements ICommandArgument {
+public class SetSchematicArgument implements ICommandArgument {
     @Override
     public String getArgument() {
-        return "addbuildingarea <theme> <level> <id>";
+        return "setschematic <theme> <level> <building_id> <schematic_id>";
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCommand(Player player, String[] strings, Command command, IKingdomsPlugin plugin) {
         IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(strings[0]);
@@ -29,23 +30,18 @@ public class ListBuildingAreaArgument implements ICommandArgument {
             return;
         }
         IKingdomTemplate template = theme.getTemplate(level);
-        String id = strings[2];
-        IKingdomBuilding building = null;
-        for (IKingdomBuilding b : template.getBuildings()) {
-            if (b.getId().equalsIgnoreCase(id)) {
-                building = b;
-                break;
-            }
-        }
+        IKingdomBuilding building = plugin.getBuildingManager().getBuilding(strings[2], template);
         if (building == null) {
-            player.sendMessage(KingdomUtils.PREFIX + "Building with this ID doesn't exist!");
+            player.sendMessage(KingdomUtils.PREFIX + "A building with that ID doesn't exist!");
             return;
         }
-        player.sendMessage(KingdomUtils.PREFIX + "Building areas by index:");
-        int i = 0;
-        for (SerializableVector[] area : building.getBuildingAreas()) {
-            player.sendMessage("§f" + i + ": §7(" + area[0].toString() + "; " + area[1].toString() + ")");
-            i++;
+        String schematicData = strings[3];
+        if (plugin.getBuildingManager().getSchematicData(schematicData) == null) {
+            player.sendMessage(KingdomUtils.PREFIX + "Schematic data with that ID doesn't exist!");
+            return;
         }
+        building.setSchematicData(schematicData);
+        player.sendMessage(KingdomUtils.PREFIX + "Schematic data set!");
+        theme.save(plugin);
     }
 }

@@ -68,7 +68,7 @@ public class KingdomCreator implements IMenu {
                 if (inv == null) {
                     inv = Bukkit.createInventory(this, 9, "§lAre you sure?");
                     inv.setItem(2, ItemUtils.constructItem(Material.LIME_WOOL, "§a§lConfirm", new ArrayList<>()));
-                    inv.setItem(6, ItemUtils.constructItem(Material.LIME_WOOL, "§4§lCancel", new ArrayList<>()));
+                    inv.setItem(6, ItemUtils.constructItem(Material.RED_WOOL, "§4§lCancel", new ArrayList<>()));
                 }
                 return inv;
             }

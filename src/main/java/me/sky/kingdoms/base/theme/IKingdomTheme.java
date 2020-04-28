@@ -2,8 +2,8 @@ package me.sky.kingdoms.base.theme;
 
 import com.google.gson.Gson;
 import me.sky.kingdoms.IKingdomsPlugin;
-import me.sky.kingdoms.base.building.IKingdomTemplate;
-import me.sky.kingdoms.base.building.KingdomTemplate;
+import me.sky.kingdoms.base.template.IKingdomTemplate;
+import me.sky.kingdoms.base.template.KingdomTemplate;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;

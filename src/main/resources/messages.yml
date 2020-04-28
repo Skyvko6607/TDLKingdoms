@@ -1,0 +1,7 @@
+HouseProperty:
+  - '&r'
+  - '&l%name%'
+  - '&l$%price%'
+  - '&lClick to buy'
+NotEnoughMoney: '&aYou don''t have enough money to do this!'
+ErrorMessage: '&4An error occurred! Please contact an administrator!'

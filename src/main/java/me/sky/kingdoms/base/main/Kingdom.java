@@ -1,11 +1,14 @@
 package me.sky.kingdoms.base.main;
 
-import me.sky.kingdoms.base.data.buildings.types.KingdomBuilding;
+import me.sky.kingdoms.IKingdomsPlugin;
+import me.sky.kingdoms.base.building.IKingdomBuilding;
+import me.sky.kingdoms.base.building.data.KingdomBuildingData;
 import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.main.objects.KingdomPrivacy;
 import me.sky.kingdoms.base.main.objects.KingdomRank;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.utils.SerializableLocation;
+import me.sky.kingdoms.utils.SerializableVector;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -15,11 +18,12 @@ public class Kingdom implements IKingdom {
 
     private final String uuid, theme;
     private final SerializableLocation location;
-    private final List<KingdomBuilding> buildings = new ArrayList<>();
+    private final Map<String, KingdomBuildingData> buildings = new HashMap<>();
     private final Map<UUID, MemberData> memberDataMap = new HashMap<>();
     private String name;
     private int level = 1;
     private double experience = 0, balance = 0;
+    private SerializableVector[] points;
     private KingdomPrivacy privacy;
     private SerializableLocation home = null;
 
@@ -58,7 +62,7 @@ public class Kingdom implements IKingdom {
     }
 
     @Override
-    public List<KingdomBuilding> getBuildings() {
+    public Map<String, KingdomBuildingData> getBuildings() {
         return buildings;
     }
 
@@ -85,6 +89,19 @@ public class Kingdom implements IKingdom {
     @Override
     public SerializableLocation getHome() {
         return home;
+    }
+
+    @Override
+    public UUID getBuildingOwner(IKingdomBuilding building) {
+        if (getBuildings().containsKey(building.getId()) && getBuildings().get(building.getId()).isOwned()) {
+            return getBuildings().get(building.getId()).getOwnedBy();
+        }
+        return null;
+    }
+
+    @Override
+    public SerializableVector[] getPoints() {
+        return points;
     }
 
     @Override
@@ -123,13 +140,16 @@ public class Kingdom implements IKingdom {
     }
 
     @Override
-    public void addMember(Player player) {
+    public void addMember(Player player, IKingdomsPlugin plugin) {
         memberDataMap.put(player.getUniqueId(), new MemberData(player, KingdomRank.MEMBER));
     }
 
     @Override
-    public void removeMember(Player player) {
+    public void removeMember(Player player, IKingdomsPlugin plugin) {
         memberDataMap.remove(player.getUniqueId());
+        if (memberDataMap.isEmpty()) {
+            plugin.getKingdomManager().removeKingdom(this);
+        }
     }
 
     @Override
@@ -148,5 +168,10 @@ public class Kingdom implements IKingdom {
     @Override
     public void setHome(Location location) {
         this.home = new SerializableLocation(location);
+    }
+
+    @Override
+    public void setPoints(SerializableVector[] vectors) {
+        this.points = vectors;
     }
 }

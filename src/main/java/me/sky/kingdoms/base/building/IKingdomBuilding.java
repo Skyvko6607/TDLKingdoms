@@ -1,6 +1,7 @@
 package me.sky.kingdoms.base.building;
 
 import com.sk89q.worldedit.math.Vector3;
+import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.utils.SerializableVector;
 
@@ -12,13 +13,15 @@ public interface IKingdomBuilding {
     String getName();
     KingdomBuildingType getType();
     Vector3 getOffset();
+    Vector3 getBuildingOffset(IKingdomsPlugin plugin);
     Direction getDirection();
     List<SerializableVector[]> getBuildingAreas();
-    File getSchematicFile();
+    SchematicData getSchematicData(IKingdomsPlugin plugin);
+    File getSchematicFile(IKingdomsPlugin plugin);
 
-    void setName(String name);
     void setOffset(Vector3 offset);
     void setType(KingdomBuildingType type);
     void setDirection(Direction direction);
     void addBuildingArea(SerializableVector[] area);
+    void setSchematicData(String data);
 }

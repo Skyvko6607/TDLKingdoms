@@ -1,12 +1,13 @@
 package me.sky.kingdoms;
 
 import com.google.gson.Gson;
-import me.sky.kingdoms.base.data.buildings.BuildingManager;
+import me.sky.kingdoms.base.building.BuildingManager;
 import me.sky.kingdoms.base.main.IKingdomManager;
 import me.sky.kingdoms.base.main.KingdomManager;
 import me.sky.kingdoms.base.theme.IKingdomThemeManager;
 import me.sky.kingdoms.base.theme.KingdomThemeManager;
 import me.sky.kingdoms.commands.KingdomCommand;
+import me.sky.kingdoms.events.BuildingEvents;
 import me.sky.kingdoms.utils.Language;
 import me.sky.kingdoms.utils.Options;
 import me.sky.kingdoms.utils.menu.IMenuHandler;
@@ -36,6 +37,7 @@ public class Main extends JavaPlugin implements IKingdomsPlugin {
         this.themeManager = new KingdomThemeManager(this);
         this.buildingManager = new BuildingManager(this);
         this.getCommand("kingdom").setExecutor(new KingdomCommand(this));
+        new BuildingEvents(this);
     }
 
     @Override

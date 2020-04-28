@@ -1,7 +1,7 @@
-package me.sky.kingdoms.base.building;
+package me.sky.kingdoms.base.template;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import me.sky.kingdoms.base.data.buildings.types.KingdomBuilding;
+import me.sky.kingdoms.base.building.types.KingdomBuilding;
 import me.sky.kingdoms.utils.SerializableVector;
 
 import java.io.File;
@@ -15,6 +15,7 @@ public class KingdomTemplate implements IKingdomTemplate {
     private String schematic;
     private SerializableVector offset;
     private int maxMembers;
+    private SerializableVector location;
 
     private final List<KingdomBuilding> buildings = new ArrayList<>();
 
@@ -48,6 +49,11 @@ public class KingdomTemplate implements IKingdomTemplate {
     }
 
     @Override
+    public BlockVector3 getLocation() {
+        return BlockVector3.at(location.getX(), location.getY(), location.getZ());
+    }
+
+    @Override
     public void setMaxMembers(int maxMembers) {
         this.maxMembers = maxMembers;
     }
@@ -60,5 +66,10 @@ public class KingdomTemplate implements IKingdomTemplate {
     @Override
     public void setSchematic(File schematic) {
         this.schematic = schematic.getPath();
+    }
+
+    @Override
+    public void setLocation(BlockVector3 location) {
+        this.location = new SerializableVector(location.getX(), location.getY(), location.getZ());
     }
 }

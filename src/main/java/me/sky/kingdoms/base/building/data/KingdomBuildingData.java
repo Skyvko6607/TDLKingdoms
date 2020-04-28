@@ -1,24 +1,22 @@
-package me.sky.kingdoms.base.data.buildings.data;
+package me.sky.kingdoms.base.building.data;
 
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.KingdomBuildingType;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.utils.SerializableLocation;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class HouseData implements IKingdomBuildingData {
+public class KingdomBuildingData implements IKingdomBuildingData {
 
     private final String id;
     private final List<SerializableLocation> placedBlocks = new ArrayList<>();
-    private final Map<SerializableLocation, List<ItemStack>> storage = new HashMap<>();
 
     private boolean owned = false;
-    private UUID owner = null;
+    private String owner = null;
 
-    public HouseData(IKingdomBuilding building) {
+    public KingdomBuildingData(IKingdomBuilding building) {
         this.id = building.getId();
     }
 
@@ -44,7 +42,7 @@ public class HouseData implements IKingdomBuildingData {
 
     @Override
     public UUID getOwnedBy() {
-        return owner;
+        return UUID.fromString(owner);
     }
 
     @Override
@@ -54,10 +52,6 @@ public class HouseData implements IKingdomBuildingData {
 
     @Override
     public void setOwnedBy(Player player) {
-        this.owner = player.getUniqueId();
-    }
-
-    public Map<SerializableLocation, List<ItemStack>> getStorage() {
-        return storage;
+        this.owner = player.getUniqueId().toString();
     }
 }

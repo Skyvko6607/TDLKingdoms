@@ -1,13 +1,10 @@
 package me.sky.kingdoms.base.data.objects;
 
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-
 public enum Direction {
-    NORTH(0),
-    EAST(90),
-    SOUTH(180),
-    WEST(-90);
+    NORTH(180),
+    EAST(-90),
+    SOUTH(0),
+    WEST(90);
 
     private final int angle;
 
@@ -19,15 +16,33 @@ public enum Direction {
         return angle;
     }
 
+    public static int indexOf(Direction direction) {
+        for (int i = 0; i < Direction.values().length; i++) {
+            if (Direction.values()[i] == direction) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static Direction getSubDirection(Direction start, int index) {
+        int i = indexOf(start) + index;
+        if (i >= Direction.values().length) {
+            i -= Direction.values().length;
+        }
+        return Direction.values()[i];
+    }
+
     public static Direction getDirection(float rotation) {
+        rotation -= 360;
         if (rotation >= -45 && 45 >= rotation) {
-            return Direction.NORTH;
-        } else if ((rotation >= 45 && 135 >= rotation) || (rotation <= -315 && -210 >= rotation)) {
-            return Direction.EAST;
-        } else if ((rotation >= 135 && 210 >= rotation) || (rotation <= -210 && -135 >= rotation)) {
             return Direction.SOUTH;
-        } else if ((rotation >= 210 && 315 >= rotation) || (rotation <= -135 && -45 >= rotation)) {
+        } else if (rotation >= 45 && 135 >= rotation) {
             return Direction.WEST;
+        } else if (rotation >= -135 && -45 >= rotation) {
+            return Direction.EAST;
+        } else if (rotation >= 135 || -135 >= rotation) {
+            return Direction.NORTH;
         }
         return Direction.NORTH;
     }

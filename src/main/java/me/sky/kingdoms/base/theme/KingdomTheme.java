@@ -1,7 +1,7 @@
 package me.sky.kingdoms.base.theme;
 
-import me.sky.kingdoms.base.building.IKingdomTemplate;
-import me.sky.kingdoms.base.building.KingdomTemplate;
+import me.sky.kingdoms.base.template.IKingdomTemplate;
+import me.sky.kingdoms.base.template.KingdomTemplate;
 import me.sky.kingdoms.utils.JsonItemStack;
 import org.bukkit.inventory.ItemStack;
 

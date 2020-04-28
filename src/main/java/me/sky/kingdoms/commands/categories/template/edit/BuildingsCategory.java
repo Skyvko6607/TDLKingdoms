@@ -15,6 +15,6 @@ public class BuildingsCategory implements ICommandCategory {
 
     @Override
     public List<ICommandArgument> getCommandArguments() {
-        return Arrays.asList(new AddBuildingArgument(), new RemoveBuildingArgument(), new ListBuildingArgument(), new AddBuildingAreaArgument(), new RemoveBuildingAreaArgument(), new ListBuildingAreaArgument());
+        return Arrays.asList(new AddBuildingArgument(), new RemoveBuildingArgument(), new SetSchematicArgument(), new ListBuildingArgument(), new AddBuildingAreaArgument(), new RemoveBuildingAreaArgument(), new ListBuildingAreaArgument());
     }
 }

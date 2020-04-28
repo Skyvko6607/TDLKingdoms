@@ -3,7 +3,7 @@ package me.sky.kingdoms.commands.categories.template.edit.buildings;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.building.IKingdomTemplate;
+import me.sky.kingdoms.base.template.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.commands.ICommandArgument;
 import org.bukkit.command.Command;

@@ -1,29 +1,23 @@
 package me.sky.kingdoms.base.main;
 
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.bukkit.wrapper.AsyncWorld;
-import com.boydti.fawe.util.TaskManager;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.world.FastModeExtent;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.Vector3;
-import com.sk89q.worldedit.world.block.BlockState;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.data.HouseData;
+import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.base.data.objects.IValuedBuilding;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.utils.Language;
 import me.sky.kingdoms.utils.Options;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +34,27 @@ public class KingdomManager implements IKingdomManager {
         this.plugin = plugin;
         this.kingdoms = new ArrayList<>();
         loadKingdoms();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                List<IKingdom> toRemove = new ArrayList<>();
+                kingdoms.iterator().forEachRemaining(kingdom -> {
+                    if (kingdom.getMembers().isEmpty()) {
+                        toRemove.add(kingdom);
+                        return;
+                    }
+                    for (String bId : kingdom.getBuildings().keySet()) {
+                        IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, plugin.getThemeManager().getThemeFromId(kingdom.getThemeName()).getTemplate(kingdom.getLevel()));
+                        if (building == null) {
+                            kingdom.getBuildings().remove(bId);
+                            continue;
+                        }
+                        updateSign(kingdom, building);
+                    }
+                });
+                toRemove.forEach(kingdom -> removeKingdom(kingdom));
+            }
+        }.runTaskTimer(plugin, 20, 100);
     }
 
     @Override
@@ -99,6 +114,42 @@ public class KingdomManager implements IKingdomManager {
         plugin.getLogger().info(String.format("Loaded %d Kingdoms!", kingdoms.size()));
     }
 
+    private void updateSign(IKingdom kingdom, IKingdomBuilding building) {
+        if (kingdom.getBuildingOwner(building) != null) {
+            return;
+        }
+        BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
+        vec = vec.subtract(building.getOffset().toBlockPoint());
+        Block block = new Location(kingdom.getLocation().getWorld(), vec.getX(), vec.getY(), vec.getZ()).getBlock();
+        if (!block.getChunk().isLoaded()) {
+            return;
+        }
+        if (!block.getType().name().contains("SIGN")) {
+            new Location(kingdom.getLocation().getWorld(), vec.getX(), vec.getY() - 1, vec.getZ()).getBlock().setType(Material.BEDROCK);
+            block.setType(Material.OAK_SIGN);
+        }
+        Sign sign = (Sign) block.getState();
+        List<String> signLore = new ArrayList<>(Language.get().getMessageList(StringUtils.capitalize(building.getType().name().toLowerCase()) + "Property"));
+        signLore.replaceAll(s -> s
+                .replace("%price%", (building instanceof IValuedBuilding ? String.valueOf(((IValuedBuilding) building).getBuyPrice()) : "0"))
+                .replace("%name%", building.getName())
+        );
+        for (int i = 0; i < 4; i++) {
+            if (i >= signLore.size()) {
+                break;
+            }
+            sign.setLine(i, signLore.get(i));
+        }
+        sign.update();
+        if (building.getDirection() != null) {
+            org.bukkit.block.data.type.Sign sign1 = (org.bukkit.block.data.type.Sign) block.getBlockData();
+            Direction direction = building.getDirection();
+            sign1.setRotation(BlockFace.valueOf(Direction.getSubDirection(direction, 2).name()));
+            block.setBlockData(sign1);
+            block.getState().update();
+        }
+    }
+
     @Override
     public IKingdom createKingdom(Player owner, String name, IKingdomTheme theme) {
         IKingdom nearest = getNearestKingdom(owner.getLocation());
@@ -112,41 +163,14 @@ public class KingdomManager implements IKingdomManager {
             e.printStackTrace();
             return null;
         }
-        kingdom.getBuildings().addAll(theme.getTemplate(kingdom.getLevel()).getBuildings());
-        for (IKingdomBuilding building : kingdom.getBuildings()) {
-            BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
-            vec.add(building.getOffset().toBlockPoint());
-            Block block = new Location(kingdom.getLocation().getWorld(), vec.getX(), vec.getY(), vec.getZ()).getBlock();
-            block.setType(Material.OAK_SIGN);
+        theme.getTemplate(kingdom.getLevel()).getBuildings().forEach(kingdomBuilding -> kingdom.getBuildings().put(kingdomBuilding.getId(), kingdomBuilding.getType() == KingdomBuildingType.HOUSE ? new HouseData(kingdomBuilding) : null));
+        for (String bId : kingdom.getBuildings().keySet()) {
+            IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, theme.getTemplate(kingdom.getLevel()));
+            updateSign(kingdom, building);
         }
-        TaskManager.IMP.async(() -> {
-            AsyncWorld world = AsyncWorld.wrap(kingdom.getLocation().getWorld());
-            for (IKingdomBuilding building : kingdom.getBuildings()) {
-                BlockVector3 vec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
-                vec.add(building.getOffset().toBlockPoint());
-                BlockState b = vec.getBlock(new FastModeExtent(FaweAPI.getWorld(world.getName())));
-                world.setBlock(vec.getX(), vec.getY(), vec.getZ(), b);
-            }
-            world.commit();
-//            for (IKingdomBuilding building : theme.getTemplate(kingdom.getLevel()).getBuildings()) {
-//                Vector3 offset = building.getOffset();
-//                Sign sign = (Sign) kingdom.getLocation().add(offset.getX(), offset.getY(), offset.getZ()).getBlock().getState();
-//                List<String> signLore = Language.get().getMessageList(StringUtils.capitalize(building.getType().name()) + "Property");
-//                signLore.replaceAll(s -> s
-//                        .replace("%price%", (building instanceof IValuedBuilding ? String.valueOf(((IValuedBuilding) building).getBuyPrice()) : "0"))
-//                        .replace("%name%", building.getName())
-//                );
-//                for (int i = 0; i < 4; i++) {
-//                    if (i >= signLore.size()) {
-//                        break;
-//                    }
-//                    sign.setLine(i, signLore.get(i));
-//                }
-//                sign.update();
-//            }
-        });
         owner.closeInventory();
         plugin.getKingdomManager().saveKingdom(kingdom);
+        kingdoms.add(kingdom);
         return kingdom;
     }
 

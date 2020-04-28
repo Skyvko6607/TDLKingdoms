@@ -4,6 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class Language {
             c.getConfig().options().copyDefaults(true);
             for (String key : c.getConfig().getKeys(false)) {
                 if (!config.getConfig().contains(key)) {
-                    config.getConfig().set(key, c.getConfig().getString(key));
+                    config.getConfig().set(key, c.getConfig().get(key));
                 }
             }
             config.saveConfig();
@@ -62,7 +64,7 @@ public class Language {
             config.getConfig().set(s, Collections.singletonList("&4Example Message"));
             config.saveConfig();
             config.reloadConfig();
-            return Collections.singletonList("§cMessage does not exist!");
+            return new ArrayList<>(Collections.singletonList("§cMessage does not exist!"));
         }
         List<String> lore = config.getConfig().getStringList(s);
         lore.replaceAll(s1 -> ChatColor.translateAlternateColorCodes('&', s1));

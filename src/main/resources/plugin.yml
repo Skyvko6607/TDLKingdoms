@@ -3,5 +3,6 @@ version: 1.0
 api-version: 1.15
 main: me.sky.kingdoms.Main
 author: Skyvko6607
+depend: [Vault, WorldEdit]
 commands:
   kingdom:

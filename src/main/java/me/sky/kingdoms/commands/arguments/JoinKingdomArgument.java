@@ -29,7 +29,7 @@ public class JoinKingdomArgument implements ICommandArgument {
             player.sendMessage(KingdomUtils.PREFIX + "The kingdom is currently full! Try again later.");
             return;
         }
-        kingdom.addMember(player);
+        kingdom.addMember(player, plugin);
         plugin.getKingdomManager().saveKingdom(kingdom);
         player.sendMessage(KingdomUtils.PREFIX + "You have successfully joined the kingdom!");
     }

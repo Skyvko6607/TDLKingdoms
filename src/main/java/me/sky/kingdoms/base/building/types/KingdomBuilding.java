@@ -1,8 +1,10 @@
-package me.sky.kingdoms.base.data.buildings.types;
+package me.sky.kingdoms.base.building.types;
 
 import com.sk89q.worldedit.math.Vector3;
+import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.SchematicData;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.utils.SerializableVector;
 
@@ -12,16 +14,16 @@ import java.util.List;
 
 public class KingdomBuilding implements IKingdomBuilding {
 
-    private final String id, schematic;
+    private final String id;
     private final List<SerializableVector[]> buildingAreas;
-    private String name = "New Building";
-    private KingdomBuildingType type;
+    private String type;
     private SerializableVector offset;
-    private Direction direction;
+    private String direction;
+    private String data;
 
-    public KingdomBuilding(String id, File schematic) {
+    public KingdomBuilding(String id) {
         this.id = id;
-        this.schematic = schematic.getPath();
+        this.data = null;
         this.buildingAreas = new ArrayList<>();
     }
 
@@ -32,12 +34,12 @@ public class KingdomBuilding implements IKingdomBuilding {
 
     @Override
     public String getName() {
-        return name;
+        return getType().getName();
     }
 
     @Override
     public KingdomBuildingType getType() {
-        return type;
+        return KingdomBuildingType.valueOf(type);
     }
 
     @Override
@@ -46,8 +48,14 @@ public class KingdomBuilding implements IKingdomBuilding {
     }
 
     @Override
+    public Vector3 getBuildingOffset(IKingdomsPlugin plugin) {
+        SchematicData data = getSchematicData(plugin);
+        return Vector3.at(data.getOffset().getX(), data.getOffset().getY(), data.getOffset().getZ());
+    }
+
+    @Override
     public Direction getDirection() {
-        return direction;
+        return Direction.valueOf(direction);
     }
 
     @Override
@@ -56,13 +64,13 @@ public class KingdomBuilding implements IKingdomBuilding {
     }
 
     @Override
-    public File getSchematicFile() {
-        return new File(schematic);
+    public SchematicData getSchematicData(IKingdomsPlugin plugin) {
+        return plugin.getBuildingManager().getSchematicData(data);
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public File getSchematicFile(IKingdomsPlugin plugin) {
+        return plugin.getBuildingManager().getSchematicData(data).getSchematic();
     }
 
     @Override
@@ -72,16 +80,21 @@ public class KingdomBuilding implements IKingdomBuilding {
 
     @Override
     public void setType(KingdomBuildingType type) {
-        this.type = type;
+        this.type = type.name();
     }
 
     @Override
     public void setDirection(Direction direction) {
-        this.direction = direction;
+        this.direction = direction.name();
     }
 
     @Override
     public void addBuildingArea(SerializableVector[] area) {
         this.buildingAreas.add(area);
+    }
+
+    @Override
+    public void setSchematicData(String data) {
+        this.data = data;
     }
 }
