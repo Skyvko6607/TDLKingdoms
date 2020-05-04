@@ -15,6 +15,7 @@ public class KingdomBuildingData implements IKingdomBuildingData {
 
     private boolean owned = false;
     private String owner = null;
+    private int angle;
 
     public KingdomBuildingData(IKingdomBuilding building) {
         this.id = building.getId();
@@ -46,12 +47,31 @@ public class KingdomBuildingData implements IKingdomBuildingData {
     }
 
     @Override
+    public int getAngle() {
+        return angle;
+    }
+
+    @Override
     public void setOwned(boolean owned) {
         this.owned = owned;
     }
 
     @Override
     public void setOwnedBy(Player player) {
-        this.owner = player.getUniqueId().toString();
+        setOwnedBy(player.getUniqueId());
+    }
+
+    @Override
+    public void setOwnedBy(UUID uuid) {
+        if (uuid == null) {
+            this.owner = null;
+            return;
+        }
+        this.owner = uuid.toString();
+    }
+
+    @Override
+    public void setAngle(int angle) {
+        this.angle = angle;
     }
 }

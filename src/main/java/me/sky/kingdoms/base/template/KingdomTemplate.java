@@ -14,7 +14,7 @@ public class KingdomTemplate implements IKingdomTemplate {
     private final String id;
     private String schematic;
     private SerializableVector offset;
-    private int maxMembers;
+    private int maxMembers, upgradePrice;
     private SerializableVector location;
 
     private final List<KingdomBuilding> buildings = new ArrayList<>();
@@ -54,6 +54,11 @@ public class KingdomTemplate implements IKingdomTemplate {
     }
 
     @Override
+    public int getUpgradePrice() {
+        return upgradePrice;
+    }
+
+    @Override
     public void setMaxMembers(int maxMembers) {
         this.maxMembers = maxMembers;
     }
@@ -71,5 +76,10 @@ public class KingdomTemplate implements IKingdomTemplate {
     @Override
     public void setLocation(BlockVector3 location) {
         this.location = new SerializableVector(location.getX(), location.getY(), location.getZ());
+    }
+
+    @Override
+    public void setUpgradePrice(int price) {
+        this.upgradePrice = price;
     }
 }

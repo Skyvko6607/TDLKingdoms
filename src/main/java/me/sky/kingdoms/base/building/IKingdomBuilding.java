@@ -15,13 +15,13 @@ public interface IKingdomBuilding {
     Vector3 getOffset();
     Vector3 getBuildingOffset(IKingdomsPlugin plugin);
     Direction getDirection();
-    List<SerializableVector[]> getBuildingAreas();
+    List<SerializableVector[]> getBuildingAreas(IKingdomsPlugin plugin);
+    List<SerializableVector[]> getBuildingAreas(SerializableVector center, int angle, IKingdomsPlugin plugin);
     SchematicData getSchematicData(IKingdomsPlugin plugin);
     File getSchematicFile(IKingdomsPlugin plugin);
 
     void setOffset(Vector3 offset);
     void setType(KingdomBuildingType type);
     void setDirection(Direction direction);
-    void addBuildingArea(SerializableVector[] area);
     void setSchematicData(String data);
 }

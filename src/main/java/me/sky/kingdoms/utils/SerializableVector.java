@@ -13,6 +13,10 @@ public class SerializableVector {
         this(loc.getX(), loc.getY(), loc.getZ());
     }
 
+    public SerializableVector(Vector vector) {
+        this(vector.getX(), vector.getY(), vector.getZ());
+    }
+
     public SerializableVector(double x, double y, double z) {
         this.x = x;
         this.y = y;

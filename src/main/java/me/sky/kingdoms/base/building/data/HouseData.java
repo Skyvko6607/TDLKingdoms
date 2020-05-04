@@ -3,6 +3,7 @@ package me.sky.kingdoms.base.building.data;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.utils.JsonItemStack;
 import me.sky.kingdoms.utils.SerializableLocation;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
@@ -19,8 +20,8 @@ public class HouseData extends KingdomBuildingData {
         super(building);
     }
 
-    public Map<SerializableLocation, List<ItemStack>> getStorage() {
-        Map<SerializableLocation, List<ItemStack>> itemMap = new HashMap<>();
+    public Map<Location, List<ItemStack>> getStorage() {
+        Map<Location, List<ItemStack>> itemMap = new HashMap<>();
         this.storage.forEach((serializableLocation, strings) -> {
             List<ItemStack> items = new ArrayList<>();
             strings.forEach(s -> {
@@ -29,8 +30,23 @@ public class HouseData extends KingdomBuildingData {
                 } catch (IOException | ClassNotFoundException ignored) {
                 }
             });
-            itemMap.put(serializableLocation, items);
+            itemMap.put(serializableLocation.getLocation(), items);
         });
         return itemMap;
+    }
+
+    public Map<SerializableLocation, List<String>> getJsonStorage() {
+        return storage;
+    }
+
+    public void setItems(SerializableLocation location, List<ItemStack> items) {
+        List<String> i = new ArrayList<>();
+        items.forEach(itemStack -> {
+            try {
+                i.add(JsonItemStack.itemTo64(itemStack));
+            } catch (IOException ignored) {
+            }
+        });
+        storage.put(location, i);
     }
 }

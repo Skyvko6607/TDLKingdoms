@@ -4,6 +4,8 @@ import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.utils.SerializableVector;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SchematicData {
 
@@ -11,6 +13,7 @@ public class SchematicData {
     private String schematic;
     private String direction;
     private SerializableVector offset;
+    private List<SerializableVector[]> buildingAreas = new ArrayList<>();
 
     public SchematicData(String id, File schematic, Direction direction) {
         this.id = id;
@@ -32,6 +35,10 @@ public class SchematicData {
 
     public SerializableVector getOffset() {
         return offset;
+    }
+
+    public List<SerializableVector[]> getBuildingAreas() {
+        return buildingAreas;
     }
 
     public void setSchematic(String schematic) {

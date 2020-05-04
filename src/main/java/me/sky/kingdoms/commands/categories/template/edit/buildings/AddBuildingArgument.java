@@ -11,17 +11,15 @@ import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.base.template.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.commands.ICommandArgument;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 public class AddBuildingArgument implements ICommandArgument {
     @Override
     public String getArgument() {
-        return "add <theme> <level> <id> <house/shop>";
+        return "add <theme> <level> <house_id> <house/shop>";
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onCommand(Player player, String[] strings, Command command, IKingdomsPlugin plugin) {
         IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(strings[0]);
@@ -55,6 +53,6 @@ public class AddBuildingArgument implements ICommandArgument {
 //        building.setName(ChatColor.translateAlternateColorCodes('&', strings[4]));
         template.getBuildings().add(building);
         player.sendMessage(KingdomUtils.PREFIX + "Building added!");
-        player.sendMessage(KingdomUtils.PREFIX + "Use /kingdom template edit buildings setschematic <theme> <level> <id> <schematic_id> to set the schematic for the house!");
+        player.sendMessage(KingdomUtils.PREFIX + "Use /kingdom template edit buildings setschematic <theme> <level> <house_id> <schematic_id> to set the schematic for the house!");
     }
 }

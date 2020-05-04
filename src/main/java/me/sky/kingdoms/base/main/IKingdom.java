@@ -26,6 +26,7 @@ public interface IKingdom {
     Location getLocation();
     double getBalance();
     SerializableLocation getHome();
+    UUID getBuildingOwner(String building);
     UUID getBuildingOwner(IKingdomBuilding building);
     SerializableVector[] getPoints();
 
@@ -42,4 +43,6 @@ public interface IKingdom {
     void setPrivacy(KingdomPrivacy privacy);
     void setHome(Location location);
     void setPoints(SerializableVector[] vectors);
+    void addBuildingData(String id, KingdomBuildingData data);
+    void removeBuildingData(String id);
 }

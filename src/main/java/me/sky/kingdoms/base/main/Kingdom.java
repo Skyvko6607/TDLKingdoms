@@ -2,7 +2,9 @@ package me.sky.kingdoms.base.main;
 
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
+import me.sky.kingdoms.base.building.data.HouseData;
 import me.sky.kingdoms.base.building.data.KingdomBuildingData;
+import me.sky.kingdoms.base.building.types.House;
 import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.main.objects.KingdomPrivacy;
 import me.sky.kingdoms.base.main.objects.KingdomRank;
@@ -18,7 +20,8 @@ public class Kingdom implements IKingdom {
 
     private final String uuid, theme;
     private final SerializableLocation location;
-    private final Map<String, KingdomBuildingData> buildings = new HashMap<>();
+    private final Map<String, HouseData> houses = new HashMap<>();
+//    private final Map<String, ShopData> shops = new HashMap<>();
     private final Map<UUID, MemberData> memberDataMap = new HashMap<>();
     private String name;
     private int level = 1;
@@ -32,7 +35,7 @@ public class Kingdom implements IKingdom {
         this.name = name;
         this.theme = theme.getId();
         this.location = new SerializableLocation(player.getLocation());
-        this.memberDataMap.put(player.getUniqueId(), new MemberData(player, KingdomRank.CREATOR));
+        this.memberDataMap.put(player.getUniqueId(), new MemberData(player, KingdomRank.CO_RULER));
         this.privacy = KingdomPrivacy.PRIVATE;
     }
 
@@ -63,7 +66,7 @@ public class Kingdom implements IKingdom {
 
     @Override
     public Map<String, KingdomBuildingData> getBuildings() {
-        return buildings;
+        return new HashMap<>(houses);
     }
 
     @Override
@@ -92,11 +95,16 @@ public class Kingdom implements IKingdom {
     }
 
     @Override
-    public UUID getBuildingOwner(IKingdomBuilding building) {
-        if (getBuildings().containsKey(building.getId()) && getBuildings().get(building.getId()).isOwned()) {
-            return getBuildings().get(building.getId()).getOwnedBy();
+    public UUID getBuildingOwner(String building) {
+        if (getBuildings().containsKey(building) && getBuildings().get(building).isOwned()) {
+            return getBuildings().get(building).getOwnedBy();
         }
         return null;
+    }
+
+    @Override
+    public UUID getBuildingOwner(IKingdomBuilding building) {
+        return getBuildingOwner(building.getId());
     }
 
     @Override
@@ -173,5 +181,17 @@ public class Kingdom implements IKingdom {
     @Override
     public void setPoints(SerializableVector[] vectors) {
         this.points = vectors;
+    }
+
+    @Override
+    public void addBuildingData(String id, KingdomBuildingData data) {
+        if (data instanceof HouseData) {
+            houses.put(id, (HouseData) data);
+        }
+    }
+
+    @Override
+    public void removeBuildingData(String id) {
+        houses.remove(id);
     }
 }

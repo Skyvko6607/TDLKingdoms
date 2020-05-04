@@ -52,7 +52,9 @@ public interface ICommandCategory extends ICommandArgument {
 
     default void sendArgumentsList(Player player, String command) {
         for (ICommandArgument argument : getCommandArguments()) {
-            player.sendMessage("  §f- §b/" + command + (getArgument() != null ? " " + getArgument() : "") + " " + argument.getArgument());
+            if (getPermission() == null || player.hasPermission(getPermission()) || player.isOp()) {
+                player.sendMessage("  §f- §b/" + command + (getArgument() != null ? " " + getArgument() : "") + " " + argument.getArgument());
+            }
         }
     }
 }

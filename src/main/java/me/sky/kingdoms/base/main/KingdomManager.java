@@ -46,7 +46,7 @@ public class KingdomManager implements IKingdomManager {
                     for (String bId : kingdom.getBuildings().keySet()) {
                         IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, plugin.getThemeManager().getThemeFromId(kingdom.getThemeName()).getTemplate(kingdom.getLevel()));
                         if (building == null) {
-                            kingdom.getBuildings().remove(bId);
+                            kingdom.removeBuildingData(bId);
                             continue;
                         }
                         updateSign(kingdom, building);

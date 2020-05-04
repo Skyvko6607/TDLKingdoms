@@ -13,8 +13,10 @@ public interface IKingdomTemplate {
     List<KingdomBuilding> getBuildings();
     int getMaxMembers();
     BlockVector3 getLocation();
+    int getUpgradePrice();
     void setMaxMembers(int maxMembers);
     void setCenterOffset(BlockVector3 vector);
     void setSchematic(File schematic);
     void setLocation(BlockVector3 location);
+    void setUpgradePrice(int price);
 }

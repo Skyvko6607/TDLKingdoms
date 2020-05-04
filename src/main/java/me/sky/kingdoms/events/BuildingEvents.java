@@ -6,11 +6,15 @@ import com.sk89q.worldedit.regions.Region;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
+import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.data.HouseData;
+import me.sky.kingdoms.base.building.types.House;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.base.main.IKingdom;
 import me.sky.kingdoms.base.template.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import me.sky.kingdoms.gui.creator.building.BuildingClaimGUI;
+import me.sky.kingdoms.gui.player.BuildingStorageGUI;
 import me.sky.kingdoms.utils.Options;
 import me.sky.kingdoms.utils.SerializableLocation;
 import me.sky.kingdoms.utils.SerializableVector;
@@ -18,6 +22,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +31,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -81,6 +88,65 @@ public class BuildingEvents implements Listener {
         }
     }
 
+    @EventHandler
+    public void chestOpen(PlayerInteractEvent event) {
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            return;
+        }
+        if (!event.getClickedBlock().getType().name().contains("CHEST")) {
+            return;
+        }
+        Player player = event.getPlayer();
+        IKingdom kingdom = plugin.getKingdomManager().getKingdomByPlayer(player);
+        if (kingdom == null) {
+            return;
+        }
+        IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(kingdom.getThemeName());
+        IKingdomTemplate template = theme.getTemplate(kingdom.getLevel());
+
+        Region kingdomRegion = new CuboidRegion(
+                BlockVector3.at(kingdom.getPoints()[0].getX(), kingdom.getPoints()[0].getY(), kingdom.getPoints()[0].getZ()),
+                BlockVector3.at(kingdom.getPoints()[1].getX(), kingdom.getPoints()[1].getY(), kingdom.getPoints()[1].getZ())
+        );
+        if (!kingdomRegion.contains(event.getClickedBlock().getX(), event.getClickedBlock().getY(), event.getClickedBlock().getZ())) {
+            return;
+        }
+        event.setCancelled(true);
+        Chest chest = (Chest) event.getClickedBlock().getState();
+        if (chest.getInventory().getHolder() instanceof DoubleChest) {
+            chest = (Chest) ((DoubleChest) chest.getInventory().getHolder()).getLeftSide();
+        }
+        for (String bId : kingdom.getBuildings().keySet()) {
+            IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, template);
+            if (building == null) {
+                break;
+            }
+            if (!building.getType().equals(KingdomBuildingType.HOUSE)) {
+                break;
+            }
+            HouseData data = (HouseData) kingdom.getBuildings().get(bId);
+            BlockVector3 weVec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ()).subtract(building.getOffset().toBlockPoint());
+            SerializableVector vec = new SerializableVector(weVec.getX(), weVec.getY(), weVec.getZ());
+            for (SerializableVector[] area : building.getBuildingAreas(vec, data.getAngle(), plugin)) {
+                Region region = new CuboidRegion(BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()), BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
+                Bukkit.broadcastMessage(area[0].toString());
+                Bukkit.broadcastMessage(area[1].toString());
+                if (region.contains(event.getClickedBlock().getX(), event.getClickedBlock().getY(), event.getClickedBlock().getZ())) {
+                    if (!data.isOwned() || !data.getOwnedBy().equals(player.getUniqueId())) {
+                        break;
+                    }
+                    if (!data.getStorage().containsKey(event.getClickedBlock().getLocation())) {
+                        data.setItems(new SerializableLocation(event.getClickedBlock().getLocation()), new ArrayList<>());
+                        plugin.getKingdomManager().saveKingdom(kingdom);
+                    }
+                    new BuildingStorageGUI(player, kingdom, data, new SerializableLocation(event.getClickedBlock().getLocation()), chest.getBlockInventory().getHolder(), plugin);
+                    return;
+                }
+            }
+        }
+        player.sendMessage(KingdomUtils.PREFIX + "You are not allowed to open this chest!");
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void blockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
@@ -103,7 +169,9 @@ public class BuildingEvents implements Listener {
                             kingdom.getLocation().distance(event.getBlockPlaced().getLocation()) > Options.get().getInt("MinimumDistanceBetween")) {
                         return;
                     }
-                    for (SerializableVector[] area : building.getBuildingAreas()) {
+                    BlockVector3 weVec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ()).subtract(building.getOffset().toBlockPoint());
+                    SerializableVector vec = new SerializableVector(weVec.getX(), weVec.getY(), weVec.getZ());
+                    for (SerializableVector[] area : building.getBuildingAreas(vec, plugin.getBuildingManager().getAngle(building), plugin)) {
                         Region region = new CuboidRegion(BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()), BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
                         if (region.contains(event.getBlockPlaced().getX(), event.getBlockPlaced().getY(), event.getBlockPlaced().getZ())) {
                             IKingdomBuildingData data = kingdom.getBuildings().get(building.getId());

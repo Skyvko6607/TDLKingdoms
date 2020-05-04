@@ -15,7 +15,6 @@ import java.util.List;
 public class KingdomBuilding implements IKingdomBuilding {
 
     private final String id;
-    private final List<SerializableVector[]> buildingAreas;
     private String type;
     private SerializableVector offset;
     private String direction;
@@ -24,7 +23,6 @@ public class KingdomBuilding implements IKingdomBuilding {
     public KingdomBuilding(String id) {
         this.id = id;
         this.data = null;
-        this.buildingAreas = new ArrayList<>();
     }
 
     @Override
@@ -59,8 +57,23 @@ public class KingdomBuilding implements IKingdomBuilding {
     }
 
     @Override
-    public List<SerializableVector[]> getBuildingAreas() {
-        return buildingAreas;
+    public List<SerializableVector[]> getBuildingAreas(IKingdomsPlugin plugin) {
+        return getSchematicData(plugin).getBuildingAreas();
+    }
+
+    @Override
+    public List<SerializableVector[]> getBuildingAreas(SerializableVector center, int angle, IKingdomsPlugin plugin) {
+        List<SerializableVector[]> areas = new ArrayList<>();
+        getSchematicData(plugin).getBuildingAreas().forEach(vectors -> {
+            SerializableVector[] vecs = new SerializableVector[2];
+            for (int i = 0; i < vecs.length; i++) {
+                Vector3 vec = Vector3.at(vectors[i].getX(), vectors[i].getY(), vectors[i].getZ());
+                vec = vec.transform2D(angle, center.getX(), center.getZ(), 0, 0);
+                vecs[i] = new SerializableVector(vec.getX(), vec.getY(), vec.getZ());
+            }
+            areas.add(vecs);
+        });
+        return areas;
     }
 
     @Override
@@ -86,11 +99,6 @@ public class KingdomBuilding implements IKingdomBuilding {
     @Override
     public void setDirection(Direction direction) {
         this.direction = direction.name();
-    }
-
-    @Override
-    public void addBuildingArea(SerializableVector[] area) {
-        this.buildingAreas.add(area);
     }
 
     @Override

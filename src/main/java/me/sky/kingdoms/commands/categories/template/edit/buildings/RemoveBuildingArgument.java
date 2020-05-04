@@ -31,7 +31,6 @@ public class RemoveBuildingArgument implements ICommandArgument {
         String id = strings[2];
         for (IKingdomBuilding building : template.getBuildings()) {
             if (building.getId().equalsIgnoreCase(id)) {
-                building.getSchematicFile(plugin).delete();
                 template.getBuildings().remove(building);
                 player.sendMessage(KingdomUtils.PREFIX + "Building successfully removed!");
                 return;
