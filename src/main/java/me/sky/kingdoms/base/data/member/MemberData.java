@@ -60,6 +60,11 @@ public class MemberData implements IMemberData {
     }
 
     @Override
+    public List<String> getJsonDumpItems() {
+        return dumpItems;
+    }
+
+    @Override
     public void setName(String name) {
         this.name = name;
     }

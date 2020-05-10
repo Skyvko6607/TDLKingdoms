@@ -1,7 +1,8 @@
 package me.sky.kingdoms.base.template;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import me.sky.kingdoms.base.building.types.KingdomBuilding;
+import me.sky.kingdoms.base.building.KingdomBuilding;
+import me.sky.kingdoms.base.building.types.Mine;
 import me.sky.kingdoms.utils.SerializableVector;
 
 import java.io.File;
@@ -16,6 +17,7 @@ public class KingdomTemplate implements IKingdomTemplate {
     private SerializableVector offset;
     private int maxMembers, upgradePrice;
     private SerializableVector location;
+    private Mine mine;
 
     private final List<KingdomBuilding> buildings = new ArrayList<>();
 
@@ -59,6 +61,11 @@ public class KingdomTemplate implements IKingdomTemplate {
     }
 
     @Override
+    public Mine getMine() {
+        return mine;
+    }
+
+    @Override
     public void setMaxMembers(int maxMembers) {
         this.maxMembers = maxMembers;
     }
@@ -81,5 +88,10 @@ public class KingdomTemplate implements IKingdomTemplate {
     @Override
     public void setUpgradePrice(int price) {
         this.upgradePrice = price;
+    }
+
+    @Override
+    public void setMine(Mine mine) {
+        this.mine = mine;
     }
 }

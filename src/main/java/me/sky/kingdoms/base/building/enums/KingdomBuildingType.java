@@ -1,4 +1,4 @@
-package me.sky.kingdoms.base.building;
+package me.sky.kingdoms.base.building.enums;
 
 public enum KingdomBuildingType {
     HOUSE("§aHouse"),

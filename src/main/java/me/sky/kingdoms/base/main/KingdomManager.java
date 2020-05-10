@@ -3,7 +3,7 @@ package me.sky.kingdoms.base.main;
 import com.sk89q.worldedit.math.BlockVector3;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
 import me.sky.kingdoms.base.building.data.HouseData;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.base.data.objects.IValuedBuilding;
@@ -114,7 +114,8 @@ public class KingdomManager implements IKingdomManager {
         plugin.getLogger().info(String.format("Loaded %d Kingdoms!", kingdoms.size()));
     }
 
-    private void updateSign(IKingdom kingdom, IKingdomBuilding building) {
+    @Override
+    public void updateSign(IKingdom kingdom, IKingdomBuilding building) {
         if (kingdom.getBuildingOwner(building) != null) {
             return;
         }
@@ -163,7 +164,7 @@ public class KingdomManager implements IKingdomManager {
             e.printStackTrace();
             return null;
         }
-        theme.getTemplate(kingdom.getLevel()).getBuildings().forEach(kingdomBuilding -> kingdom.getBuildings().put(kingdomBuilding.getId(), kingdomBuilding.getType() == KingdomBuildingType.HOUSE ? new HouseData(kingdomBuilding) : null));
+        theme.getTemplate(kingdom.getLevel()).getBuildings().forEach(kingdomBuilding -> kingdom.addBuildingData(kingdomBuilding.getId(), kingdomBuilding.getType() == KingdomBuildingType.HOUSE ? new HouseData(kingdomBuilding) : null));
         for (String bId : kingdom.getBuildings().keySet()) {
             IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, theme.getTemplate(kingdom.getLevel()));
             updateSign(kingdom, building);

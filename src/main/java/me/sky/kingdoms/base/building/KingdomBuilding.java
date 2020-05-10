@@ -1,10 +1,9 @@
-package me.sky.kingdoms.base.building.types;
+package me.sky.kingdoms.base.building;
 
 import com.sk89q.worldedit.math.Vector3;
 import me.sky.kingdoms.IKingdomsPlugin;
-import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.building.KingdomBuildingType;
-import me.sky.kingdoms.base.building.SchematicData;
+import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
+import me.sky.kingdoms.base.building.schematic.SchematicData;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.utils.SerializableVector;
 
@@ -66,9 +65,11 @@ public class KingdomBuilding implements IKingdomBuilding {
         List<SerializableVector[]> areas = new ArrayList<>();
         getSchematicData(plugin).getBuildingAreas().forEach(vectors -> {
             SerializableVector[] vecs = new SerializableVector[2];
-            for (int i = 0; i < vecs.length; i++) {
+            Vector3 c = Vector3.at(center.getX(), center.getY(), center.getZ());
+            for (int i = 0; i < vectors.length; i++) {
                 Vector3 vec = Vector3.at(vectors[i].getX(), vectors[i].getY(), vectors[i].getZ());
-                vec = vec.transform2D(angle, center.getX(), center.getZ(), 0, 0);
+                vec = c.subtract(vec);
+                vec = vec.transform2D(-angle, center.getX(), center.getZ(), 0, 0);
                 vecs[i] = new SerializableVector(vec.getX(), vec.getY(), vec.getZ());
             }
             areas.add(vecs);

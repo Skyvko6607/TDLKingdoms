@@ -1,4 +1,4 @@
-package me.sky.kingdoms.base.building;
+package me.sky.kingdoms.base.building.manager;
 
 import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.bukkit.wrapper.AsyncWorld;
@@ -6,9 +6,12 @@ import com.boydti.fawe.object.RunnableVal;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.boydti.fawe.util.TaskManager;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.world.FastModeExtent;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
@@ -21,8 +24,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.IManager;
 import me.sky.kingdoms.base.KingdomUtils;
+import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.data.HouseData;
-import me.sky.kingdoms.base.building.types.House;
+import me.sky.kingdoms.base.building.schematic.SchematicData;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.data.objects.Direction;
@@ -36,6 +40,7 @@ import me.sky.kingdoms.utils.SerializableVector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -46,7 +51,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.UUID;
 
 public class BuildingManager implements IManager {
 
@@ -98,10 +106,7 @@ public class BuildingManager implements IManager {
             player.sendMessage(KingdomUtils.PREFIX + "§aThe kingdom balance is too low to upgrade!");
             return;
         }
-        final IKingdomTemplate oldTemplate = theme.getTemplate(kingdom.getLevel());
-        final Map<IKingdomBuilding, IKingdomBuildingData> dataMap = new HashMap<>();
         kingdom.getBuildings().keySet().forEach(s -> {
-            dataMap.put(getBuilding(s, oldTemplate), kingdom.getBuildings().get(s));
             UUID uuid = kingdom.getBuildingOwner(s);
             if (uuid == null) {
                 return;
@@ -145,41 +150,38 @@ public class BuildingManager implements IManager {
             kingdomBuildingData.setOwned(true);
             kingdomBuildingData.setOwnedBy(owner);
             MemberData memberData = kingdom.getMembers().get(kingdomBuildingData.getOwnedBy());
-            if (building instanceof House) {
+            if (kingdomBuildingData instanceof HouseData) {
                 HouseData data = (HouseData) kingdomBuildingData;
                 BlockVector3 weVec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ()).subtract(building.getOffset().toBlockPoint());
                 SerializableVector vec = new SerializableVector(weVec.getX(), weVec.getY(), weVec.getZ());
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        for (SerializableVector[] area : building.getBuildingAreas(new SerializableVector(vec.getX(), vec.getY(), vec.getZ()), kingdomBuildingData.getAngle(), plugin)) {
-                            Region region = new CuboidRegion(FaweAPI.getWorld(kingdom.getLocation().getWorld().getName()),
-                                    BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()),
-                                    BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
-                            region.forEach(blockVector3 -> {
-                                Block block = kingdom.getLocation().getWorld().getBlockAt(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
-                                if (block.getType() == Material.CHEST) {
-                                    Chest chest = (Chest) block.getState();
-                                    if (chest.getInventory().getHolder() instanceof DoubleChest) {
-                                        chest = (Chest) ((DoubleChest) chest.getInventory().getHolder()).getLeftSide();
+                for (SerializableVector[] area : building.getBuildingAreas(new SerializableVector(vec.getX(), vec.getY(), vec.getZ()), kingdomBuildingData.getAngle(), plugin)) {
+                    Region region = new CuboidRegion(FaweAPI.getWorld(kingdom.getLocation().getWorld().getName()),
+                            BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()),
+                            BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
+                    region.forEach(blockVector3 -> {
+                        Block block = kingdom.getLocation().getWorld().getBlockAt(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
+                        if (block.getType() == Material.CHEST) {
+                            Chest chest = (Chest) block.getState();
+                            if (chest.getInventory().getHolder() instanceof DoubleChest) {
+                                chest = (Chest) ((DoubleChest) chest.getInventory().getHolder()).getLeftSide();
+                            }
+                            if (!data.getStorage().containsKey(chest.getLocation())) {
+                                List<ItemStack> items = new ArrayList<>();
+                                for (int i = 0; i < (chest.getInventory().getHolder() instanceof DoubleChest ? 54 : 27); i++) {
+                                    if (i >= memberData.getDumpItems().size()) {
+                                        break;
                                     }
-                                    if (!data.getStorage().containsKey(chest.getLocation())) {
-                                        List<ItemStack> items = new ArrayList<>();
-                                        for (int i = 0; i < (chest.getInventory().getHolder() instanceof DoubleChest ? 54 : 27); i++) {
-                                            if (i >= memberData.getDumpItems().size()) {
-                                                break;
-                                            }
-                                            items.add(memberData.getDumpItems().get(i));
-                                        }
-                                        data.setItems(new SerializableLocation(chest.getLocation()), items);
-                                    }
+                                    items.add(memberData.getDumpItems().get(i));
+                                    memberData.getJsonDumpItems().remove(i);
                                 }
-                            });
+                                data.setItems(new SerializableLocation(chest.getLocation()), items);
+                            }
                         }
-                        plugin.getKingdomManager().saveKingdom(kingdom);
-                    }
-                }.runTaskAsynchronously(plugin);
+                    });
+                }
+                plugin.getKingdomManager().saveKingdom(kingdom);
             }
+            plugin.getKingdomManager().updateSign(kingdom, building);
         });
         plugin.getKingdomManager().saveKingdom(kingdom);
     }
@@ -239,7 +241,6 @@ public class BuildingManager implements IManager {
     private void placeBuilding(IKingdom kingdom, BlockVector3 loc, IKingdomBuilding building) throws IOException {
         BlockVector3 buildingOffset = building.getBuildingOffset(plugin).toBlockPoint();
         File schematic = building.getSchematicFile(plugin);
-        Bukkit.broadcastMessage(schematic.getAbsolutePath());
         SchematicData data = building.getSchematicData(plugin);
         Direction direction = building.getDirection();
         AffineTransform transform = new AffineTransform();
@@ -247,12 +248,10 @@ public class BuildingManager implements IManager {
             transform = transform.rotateY(getAngle(building));
         }
         ClipboardHolder holder = new ClipboardHolder(BuiltInClipboardFormat.MINECRAFT_STRUCTURE.load(schematic));
-        Clipboard clipboard = holder.getClipboard();
-        clipboard.setOrigin(buildingOffset);
-        EditSession extent = new EditSessionBuilder(FaweAPI.getWorld(kingdom.getLocation().getWorld().getName())).fastmode(true).build();
-        ForwardExtentCopy copy = new ForwardExtentCopy(holder.getClipboard(), clipboard.getRegion(), clipboard.getOrigin(), extent, loc);
-        copy.setTransform(transform);
-        Operations.complete(copy);
+        holder.getClipboard().setOrigin(buildingOffset);
+        EditSession extent = new EditSessionBuilder(FaweAPI.getWorld(kingdom.getLocation().getWorld().getName())).fastmode(false).build();
+        holder.setTransform(transform);
+        Operations.complete(holder.createPaste(extent).ignoreAirBlocks(false).to(loc).build());
         extent.flushQueue();
     }
 
@@ -303,7 +302,7 @@ public class BuildingManager implements IManager {
         });
         BlockVector3 loc = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ());
         BlockVector3 loc1 = loc.subtract(clipboard.getClipboard().getMaximumPoint().divide(2));
-        BlockVector3 loc2 = loc.add(clipboard.getClipboard().getMaximumPoint().divide(2).add(1, 1, 1));
+        BlockVector3 loc2 = loc.add(clipboard.getClipboard().getMaximumPoint().divide(2));
         kingdom.setPoints(new SerializableVector[]{
                 new SerializableVector(loc1.getX(), 0, loc1.getZ()),
                 new SerializableVector(loc2.getX(), 255, loc2.getZ())

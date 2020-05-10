@@ -1,7 +1,7 @@
 package me.sky.kingdoms.base.building.data;
 
 import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.utils.SerializableLocation;
 import org.bukkit.entity.Player;

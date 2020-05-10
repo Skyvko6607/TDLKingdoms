@@ -1,4 +1,4 @@
-package me.sky.kingdoms.base.building;
+package me.sky.kingdoms.base.building.schematic;
 
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.utils.SerializableVector;
@@ -12,6 +12,7 @@ public class SchematicData {
     private String id;
     private String schematic;
     private String direction;
+    private SerializableVector location;
     private SerializableVector offset;
     private List<SerializableVector[]> buildingAreas = new ArrayList<>();
 
@@ -33,6 +34,10 @@ public class SchematicData {
         return Direction.valueOf(direction);
     }
 
+    public SerializableVector getLocation() {
+        return location;
+    }
+
     public SerializableVector getOffset() {
         return offset;
     }
@@ -47,6 +52,10 @@ public class SchematicData {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public void setLocation(SerializableVector location) {
+        this.location = location;
     }
 
     public void setOffset(SerializableVector offset) {

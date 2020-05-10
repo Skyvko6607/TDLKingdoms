@@ -6,9 +6,8 @@ import com.sk89q.worldedit.regions.Region;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
 import me.sky.kingdoms.base.building.data.HouseData;
-import me.sky.kingdoms.base.building.types.House;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.base.main.IKingdom;
 import me.sky.kingdoms.base.template.IKingdomTemplate;
@@ -18,7 +17,6 @@ import me.sky.kingdoms.gui.player.BuildingStorageGUI;
 import me.sky.kingdoms.utils.Options;
 import me.sky.kingdoms.utils.SerializableLocation;
 import me.sky.kingdoms.utils.SerializableVector;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,7 +29,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -88,7 +85,7 @@ public class BuildingEvents implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void chestOpen(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
@@ -103,7 +100,6 @@ public class BuildingEvents implements Listener {
         }
         IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(kingdom.getThemeName());
         IKingdomTemplate template = theme.getTemplate(kingdom.getLevel());
-
         Region kingdomRegion = new CuboidRegion(
                 BlockVector3.at(kingdom.getPoints()[0].getX(), kingdom.getPoints()[0].getY(), kingdom.getPoints()[0].getZ()),
                 BlockVector3.at(kingdom.getPoints()[1].getX(), kingdom.getPoints()[1].getY(), kingdom.getPoints()[1].getZ())
@@ -129,8 +125,6 @@ public class BuildingEvents implements Listener {
             SerializableVector vec = new SerializableVector(weVec.getX(), weVec.getY(), weVec.getZ());
             for (SerializableVector[] area : building.getBuildingAreas(vec, data.getAngle(), plugin)) {
                 Region region = new CuboidRegion(BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()), BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
-                Bukkit.broadcastMessage(area[0].toString());
-                Bukkit.broadcastMessage(area[1].toString());
                 if (region.contains(event.getClickedBlock().getX(), event.getClickedBlock().getY(), event.getClickedBlock().getZ())) {
                     if (!data.isOwned() || !data.getOwnedBy().equals(player.getUniqueId())) {
                         break;
@@ -154,45 +148,41 @@ public class BuildingEvents implements Listener {
         if (kingdom == null) {
             return;
         }
-        final Material type = event.getBlockPlaced().getType();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(kingdom.getThemeName());
-                IKingdomTemplate template = theme.getTemplate(kingdom.getLevel());
-                for (String bId : kingdom.getBuildings().keySet()) {
-                    IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, template);
-                    if (building == null) {
-                        continue;
-                    }
-                    if (!kingdom.getLocation().getWorld().equals(event.getBlockPlaced().getWorld()) ||
-                            kingdom.getLocation().distance(event.getBlockPlaced().getLocation()) > Options.get().getInt("MinimumDistanceBetween")) {
+        if (!kingdom.getLocation().getWorld().equals(event.getBlockPlaced().getWorld()) ||
+                kingdom.getLocation().distance(event.getBlockPlaced().getLocation()) > Options.get().getInt("MinimumDistanceBetween")) {
+            return;
+        }
+        IKingdomTheme theme = plugin.getThemeManager().getThemeFromId(kingdom.getThemeName());
+        IKingdomTemplate template = theme.getTemplate(kingdom.getLevel());
+        for (String bId : kingdom.getBuildings().keySet()) {
+            IKingdomBuilding building = plugin.getBuildingManager().getBuilding(bId, template);
+            if (building == null) {
+                continue;
+            }
+            BlockVector3 weVec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ()).subtract(building.getOffset().toBlockPoint());
+            SerializableVector vec = new SerializableVector(weVec.getX(), weVec.getY(), weVec.getZ());
+            for (SerializableVector[] area : building.getBuildingAreas(vec, plugin.getBuildingManager().getAngle(building), plugin)) {
+                Region region = new CuboidRegion(BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()), BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
+                if (region.contains(event.getBlockPlaced().getX(), event.getBlockPlaced().getY(), event.getBlockPlaced().getZ())) {
+                    IKingdomBuildingData data = kingdom.getBuildings().get(building.getId());
+                    if (!data.isOwned() || !data.getOwnedBy().equals(player.getUniqueId())) {
+                        player.sendMessage(KingdomUtils.PREFIX + "You are not allowed to build here!");
+                        event.setCancelled(true);
                         return;
                     }
-                    BlockVector3 weVec = BlockVector3.at(kingdom.getLocation().getX(), kingdom.getLocation().getY(), kingdom.getLocation().getZ()).subtract(building.getOffset().toBlockPoint());
-                    SerializableVector vec = new SerializableVector(weVec.getX(), weVec.getY(), weVec.getZ());
-                    for (SerializableVector[] area : building.getBuildingAreas(vec, plugin.getBuildingManager().getAngle(building), plugin)) {
-                        Region region = new CuboidRegion(BlockVector3.at(area[0].getX(), area[0].getY(), area[0].getZ()), BlockVector3.at(area[1].getX(), area[1].getY(), area[1].getZ()));
-                        if (region.contains(event.getBlockPlaced().getX(), event.getBlockPlaced().getY(), event.getBlockPlaced().getZ())) {
-                            IKingdomBuildingData data = kingdom.getBuildings().get(building.getId());
-                            if (!data.isOwned() || !data.getOwnedBy().equals(player.getUniqueId())) {
-                                player.sendMessage(KingdomUtils.PREFIX + "You are not allowed to build here!");
-                                return;
-                            }
-                            data.getPlacedBlocks().add(new SerializableLocation(event.getBlockPlaced().getLocation()));
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    event.getBlockPlaced().setType(type);
-                                }
-                            }.runTaskLater(plugin, 1);
-                            return;
-                        }
-                    }
+                    data.getPlacedBlocks().add(new SerializableLocation(event.getBlockPlaced().getLocation()));
+                    return;
                 }
             }
-        }.runTaskAsynchronously(plugin);
-        event.setCancelled(true);
+        }
+        Region kingdomRegion = new CuboidRegion(
+                BlockVector3.at(kingdom.getPoints()[0].getX(), kingdom.getPoints()[0].getY(), kingdom.getPoints()[0].getZ()),
+                BlockVector3.at(kingdom.getPoints()[1].getX(), kingdom.getPoints()[1].getY(), kingdom.getPoints()[1].getZ())
+        );
+        if (kingdomRegion.contains(event.getBlockPlaced().getX(), event.getBlockPlaced().getY(), event.getBlockPlaced().getZ())) {
+            event.setCancelled(true);
+            player.sendMessage(KingdomUtils.PREFIX + "You are not allowed to build here!");
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -2,6 +2,8 @@ package me.sky.kingdoms.base.building;
 
 import com.sk89q.worldedit.math.Vector3;
 import me.sky.kingdoms.IKingdomsPlugin;
+import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
+import me.sky.kingdoms.base.building.schematic.SchematicData;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.utils.SerializableVector;
 

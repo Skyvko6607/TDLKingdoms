@@ -9,6 +9,12 @@ public class SerializableVector {
 
     private final double x, y, z;
 
+    public SerializableVector(String s) {
+        this.x = Double.parseDouble(s.split(",")[0]);
+        this.y = Double.parseDouble(s.split(",")[1]);
+        this.z = Double.parseDouble(s.split(",")[2]);
+    }
+
     public SerializableVector(Location loc) {
         this(loc.getX(), loc.getY(), loc.getZ());
     }

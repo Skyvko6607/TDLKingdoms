@@ -1,6 +1,7 @@
 package me.sky.kingdoms.base.building.types;
 
-import me.sky.kingdoms.base.building.KingdomBuildingType;
+import me.sky.kingdoms.base.building.KingdomBuilding;
+import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
 import me.sky.kingdoms.base.data.objects.IValuedBuilding;
 
 public class Shop extends KingdomBuilding implements IValuedBuilding {

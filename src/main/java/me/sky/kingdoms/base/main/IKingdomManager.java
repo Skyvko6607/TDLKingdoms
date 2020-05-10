@@ -1,6 +1,7 @@
 package me.sky.kingdoms.base.main;
 
 import me.sky.kingdoms.base.IManager;
+import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ public interface IKingdomManager extends IManager {
     IKingdom getKingdomByUniqueId(String uniqueId);
     IKingdom getKingdomByName(String name);
     void loadKingdoms();
+    void updateSign(IKingdom kingdom, IKingdomBuilding building);
     IKingdom createKingdom(Player owner, String name, IKingdomTheme theme);
     IKingdom getNearestKingdom(Location location);
 

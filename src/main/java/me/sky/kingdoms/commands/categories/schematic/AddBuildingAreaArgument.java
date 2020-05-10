@@ -6,10 +6,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.Region;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
-import me.sky.kingdoms.base.building.IKingdomBuilding;
-import me.sky.kingdoms.base.building.SchematicData;
-import me.sky.kingdoms.base.template.IKingdomTemplate;
-import me.sky.kingdoms.base.theme.IKingdomTheme;
+import me.sky.kingdoms.base.building.schematic.SchematicData;
 import me.sky.kingdoms.commands.ICommandArgument;
 import me.sky.kingdoms.utils.SerializableVector;
 import org.bukkit.command.Command;
@@ -33,7 +30,7 @@ public class AddBuildingAreaArgument implements ICommandArgument {
             player.sendMessage(KingdomUtils.PREFIX + "No selection!");
             return;
         }
-        Vector3 offset = Vector3.at(data.getOffset().getX(), data.getOffset().getY(), data.getOffset().getZ());
+        Vector3 offset = Vector3.at(data.getLocation().getX(), data.getLocation().getY(), data.getLocation().getZ());
         Vector3 min = offset.subtract(selection.getMinimumPoint().toVector3());
         Vector3 max = offset.subtract(selection.getMaximumPoint().toVector3());
         data.getBuildingAreas().add(new SerializableVector[] {

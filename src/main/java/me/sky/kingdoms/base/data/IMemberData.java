@@ -13,6 +13,7 @@ public interface IMemberData {
     KingdomRank getRank();
     List<KingdomBuildingData> getOwningBuildings();
     List<ItemStack> getDumpItems();
+    List<String> getJsonDumpItems();
     void setName(String name);
     void setRank(KingdomRank rank);
     void addDumpItems(ItemStack... items);

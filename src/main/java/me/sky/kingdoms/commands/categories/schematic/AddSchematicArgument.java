@@ -10,7 +10,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.KingdomUtils;
-import me.sky.kingdoms.base.building.SchematicData;
+import me.sky.kingdoms.base.building.schematic.SchematicData;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.commands.ICommandArgument;
 import me.sky.kingdoms.utils.SerializableVector;
@@ -48,6 +48,7 @@ public class AddSchematicArgument implements ICommandArgument {
         SchematicData data = new SchematicData(strings[0], file, Direction.getDirection(player.getLocation().getYaw()));
         Vector3 vec = origin.subtract(clipboard.getMinimumPoint()).toVector3();
         data.setOffset(new SerializableVector(vec.getX(), vec.getY(), vec.getZ()));
+        data.setLocation(new SerializableVector(origin.getX(), origin.getY(), origin.getZ()));
         plugin.getBuildingManager().getSchematicData().add(data);
         plugin.getBuildingManager().saveSchematicData();
         player.sendMessage(KingdomUtils.PREFIX + "Schematic data successfully added!");

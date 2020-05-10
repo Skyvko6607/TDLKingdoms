@@ -42,9 +42,7 @@ public interface ICommandCategory extends ICommandArgument {
             if (argument.getArgument().split(" ")[0].equalsIgnoreCase(id)) {
                 return argument;
             } else if (argument instanceof ICommandCategory) {
-                if (argument.getArgument().split(" ")[0].equalsIgnoreCase(id)) {
-                    return argument;
-                }
+                return ((ICommandCategory) argument).getCommandArgumentById(id);
             }
         }
         return null;

@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class HouseData extends KingdomBuildingData {
 
-    private final Map<SerializableLocation, List<String>> storage = new HashMap<>();
+    private final Map<String, List<String>> storage = new HashMap<>();
 
     public HouseData(IKingdomBuilding building) {
         super(building);
@@ -30,12 +30,12 @@ public class HouseData extends KingdomBuildingData {
                 } catch (IOException | ClassNotFoundException ignored) {
                 }
             });
-            itemMap.put(serializableLocation.getLocation(), items);
+            itemMap.put(new SerializableLocation(serializableLocation).getLocation(), items);
         });
         return itemMap;
     }
 
-    public Map<SerializableLocation, List<String>> getJsonStorage() {
+    public Map<String, List<String>> getJsonStorage() {
         return storage;
     }
 
@@ -47,6 +47,13 @@ public class HouseData extends KingdomBuildingData {
             } catch (IOException ignored) {
             }
         });
-        storage.put(location, i);
+        for (String locString : storage.keySet()) {
+            SerializableLocation loc = new SerializableLocation(locString);
+            if (loc.getLocation().equals(location.getLocation())) {
+                storage.replace(locString, i);
+                return;
+            }
+        }
+        storage.put(location.toString(), i);
     }
 }
