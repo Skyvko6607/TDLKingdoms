@@ -26,6 +26,7 @@ import me.sky.kingdoms.base.IManager;
 import me.sky.kingdoms.base.KingdomUtils;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.data.HouseData;
+import me.sky.kingdoms.base.building.data.ShopData;
 import me.sky.kingdoms.base.building.schematic.SchematicData;
 import me.sky.kingdoms.base.data.IKingdomBuildingData;
 import me.sky.kingdoms.base.data.member.MemberData;
@@ -116,6 +117,8 @@ public class BuildingManager implements IManager {
             if (data instanceof HouseData) {
                 ((HouseData) data).getStorage().values().forEach(itemStacks -> memberData.addDumpItems(itemStacks.toArray(new ItemStack[0])));
                 ((HouseData) data).getJsonStorage().clear();
+            } else if (data instanceof ShopData) {
+                memberData.addDumpItems(((ShopData) data).getItems().keySet().toArray(new ItemStack[0]));
             }
             data.getPlacedBlocks().forEach(location -> {
                 Block block = location.getLocation().getBlock();

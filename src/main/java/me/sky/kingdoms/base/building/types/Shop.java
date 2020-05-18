@@ -10,7 +10,7 @@ public class Shop extends KingdomBuilding implements IValuedBuilding {
 
     public Shop(String id) {
         super(id);
-        setType(KingdomBuildingType.HOUSE);
+        setType(KingdomBuildingType.SHOP);
     }
 
     @Override

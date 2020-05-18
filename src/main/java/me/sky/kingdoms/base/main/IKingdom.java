@@ -2,7 +2,9 @@ package me.sky.kingdoms.base.main;
 
 import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
+import me.sky.kingdoms.base.building.data.HouseData;
 import me.sky.kingdoms.base.building.data.KingdomBuildingData;
+import me.sky.kingdoms.base.building.data.ShopData;
 import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.main.objects.KingdomPrivacy;
 import me.sky.kingdoms.base.main.objects.KingdomRank;
@@ -26,6 +28,8 @@ public interface IKingdom {
     Location getLocation();
     double getBalance();
     SerializableLocation getHome();
+    Map<String, HouseData> getHouses();
+    Map<String, ShopData> getShops();
     UUID getBuildingOwner(String building);
     UUID getBuildingOwner(IKingdomBuilding building);
     SerializableVector[] getPoints();

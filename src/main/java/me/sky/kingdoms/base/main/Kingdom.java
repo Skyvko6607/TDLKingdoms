@@ -4,6 +4,7 @@ import me.sky.kingdoms.IKingdomsPlugin;
 import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.data.HouseData;
 import me.sky.kingdoms.base.building.data.KingdomBuildingData;
+import me.sky.kingdoms.base.building.data.ShopData;
 import me.sky.kingdoms.base.building.types.Mine;
 import me.sky.kingdoms.base.data.member.MemberData;
 import me.sky.kingdoms.base.main.objects.KingdomPrivacy;
@@ -23,7 +24,7 @@ public class Kingdom implements IKingdom {
     private final String uuid, theme;
     private final SerializableLocation location;
     private final Map<String, HouseData> houses = new HashMap<>();
-    //    private final Map<String, ShopData> shops = new HashMap<>();
+    private final Map<String, ShopData> shops = new HashMap<>();
     private final Map<UUID, MemberData> memberDataMap = new HashMap<>();
     private String name;
     private int level = 1;
@@ -68,7 +69,10 @@ public class Kingdom implements IKingdom {
 
     @Override
     public Map<String, KingdomBuildingData> getBuildings() {
-        return new HashMap<>(houses);
+        return new HashMap<String, KingdomBuildingData>() {{
+            putAll(houses);
+            putAll(shops);
+        }};
     }
 
     @Override
@@ -94,6 +98,16 @@ public class Kingdom implements IKingdom {
     @Override
     public SerializableLocation getHome() {
         return home;
+    }
+
+    @Override
+    public Map<String, HouseData> getHouses() {
+        return houses;
+    }
+
+    @Override
+    public Map<String, ShopData> getShops() {
+        return shops;
     }
 
     @Override
@@ -189,6 +203,8 @@ public class Kingdom implements IKingdom {
     public void addBuildingData(String id, KingdomBuildingData data) {
         if (data instanceof HouseData) {
             houses.put(id, (HouseData) data);
+        } else if (data instanceof ShopData) {
+            shops.put(id, (ShopData) data);
         }
     }
 

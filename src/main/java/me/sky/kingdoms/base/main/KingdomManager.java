@@ -170,7 +170,7 @@ public class KingdomManager implements IKingdomManager {
             updateSign(kingdom, building);
         }
         owner.closeInventory();
-        plugin.getKingdomManager().saveKingdom(kingdom);
+        saveKingdom(kingdom);
         kingdoms.add(kingdom);
         return kingdom;
     }

@@ -7,6 +7,7 @@ import me.sky.kingdoms.base.building.IKingdomBuilding;
 import me.sky.kingdoms.base.building.enums.KingdomBuildingType;
 import me.sky.kingdoms.base.building.types.House;
 import me.sky.kingdoms.base.building.KingdomBuilding;
+import me.sky.kingdoms.base.building.types.Shop;
 import me.sky.kingdoms.base.data.objects.Direction;
 import me.sky.kingdoms.base.template.IKingdomTemplate;
 import me.sky.kingdoms.base.theme.IKingdomTheme;
@@ -17,7 +18,7 @@ import org.bukkit.entity.Player;
 public class AddBuildingArgument implements ICommandArgument {
     @Override
     public String getArgument() {
-        return "add <theme> <level> <house_id> <house/shop>";
+        return "add <theme> <level> <building_id> <house/shop>";
     }
 
     @Override
@@ -44,8 +45,8 @@ public class AddBuildingArgument implements ICommandArgument {
         KingdomBuilding building = null;
         if (type == KingdomBuildingType.HOUSE) {
             building = new House(id);
-        } else {
-            building = new KingdomBuilding(id);
+        } else if (type == KingdomBuildingType.SHOP) {
+            building = new Shop(id);
         }
         BlockVector3 offset = BlockVector3.at(template.getLocation().getX(), template.getLocation().getY(), template.getLocation().getZ());
         building.setOffset(offset.subtract(BlockVector3.at(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ())).toVector3());
@@ -53,6 +54,6 @@ public class AddBuildingArgument implements ICommandArgument {
 //        building.setName(ChatColor.translateAlternateColorCodes('&', strings[4]));
         template.getBuildings().add(building);
         player.sendMessage(KingdomUtils.PREFIX + "Building added!");
-        player.sendMessage(KingdomUtils.PREFIX + "Use /kingdom template edit buildings setschematic <theme> <level> <house_id> <schematic_id> to set the schematic for the house!");
+        player.sendMessage(KingdomUtils.PREFIX + "Use /kingdom template edit buildings setschematic <theme> <level> <building_id> <schematic_id> to set the schematic for the house!");
     }
 }

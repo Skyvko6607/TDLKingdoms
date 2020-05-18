@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public class RemoveBuildingArgument implements ICommandArgument {
     @Override
     public String getArgument() {
-        return "remove <theme> <level> <id>";
+        return "remove <theme> <level> <building_id>";
     }
 
     @Override
