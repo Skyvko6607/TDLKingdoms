@@ -17,8 +17,8 @@ public class MemberData implements IMemberData {
     private final String uuid;
     private String name;
     private KingdomRank rank;
-    private final List<KingdomBuildingData> owningBuildings;
-    private List<String> dumpItems = new ArrayList<>();
+    private final List<String> owningBuildings;
+    private final List<String> dumpItems = new ArrayList<>();
 
     public MemberData(Player player, KingdomRank rank) {
         this.uuid = player.getUniqueId().toString();
@@ -43,7 +43,7 @@ public class MemberData implements IMemberData {
     }
 
     @Override
-    public List<KingdomBuildingData> getOwningBuildings() {
+    public List<String> getOwningBuildings() {
         return owningBuildings;
     }
 

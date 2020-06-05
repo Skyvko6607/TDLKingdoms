@@ -4,4 +4,6 @@ HouseProperty:
   - '&l$%price%'
   - '&lClick to buy'
 NotEnoughMoney: '&aYou don''t have enough money to do this!'
+NotEnoughSpace: '&aYou don''t have enough space in your inventory!'
 ErrorMessage: '&4An error occurred! Please contact an administrator!'
+ShopGUI: "&lShop"

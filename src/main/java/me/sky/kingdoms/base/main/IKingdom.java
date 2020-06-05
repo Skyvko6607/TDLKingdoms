@@ -13,6 +13,7 @@ import me.sky.kingdoms.utils.SerializableVector;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ public interface IKingdom {
     SerializableLocation getHome();
     Map<String, HouseData> getHouses();
     Map<String, ShopData> getShops();
+    List<ShopData> getShopDatasByOwner(Player player);
     UUID getBuildingOwner(String building);
     UUID getBuildingOwner(IKingdomBuilding building);
     SerializableVector[] getPoints();

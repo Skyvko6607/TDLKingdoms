@@ -11,7 +11,7 @@ public interface IMemberData {
     UUID getUniqueId();
     String getName();
     KingdomRank getRank();
-    List<KingdomBuildingData> getOwningBuildings();
+    List<String> getOwningBuildings();
     List<ItemStack> getDumpItems();
     List<String> getJsonDumpItems();
     void setName(String name);
