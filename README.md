@@ -1,5 +1,5 @@
 # TDLKingdoms
-Private plugin project for a client.
+Unfinished project.
 
 # Kingdom Creation
 Command: /kingdom create (name)
